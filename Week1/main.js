@@ -129,5 +129,3 @@ function immutableSummer(f, n) {
 function projectEulerProblem1UsingImmutableSummer() {
     return immutableSummer(isDivisibleByThreeOrFive, 1000)
 }
-console.log(projectEulerProblem1UsingImperativeSummer())
-console.log(projectEulerProblem1UsingImmutableSummer())
