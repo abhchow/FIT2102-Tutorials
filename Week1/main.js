@@ -4,9 +4,9 @@ Complete the following table when you submit this file:
 Surname     | Firstname | email                       | Contribution% | Any issues?
 ===================================================================================
 Chow        | Albert    | acho0023@student.monash.edu | 25%           |
-Person 2... |           |                             | 25%           |
-Person 3... |           |                             | 25%           |
-Person 4... |           |                             | 25%           |
+Putamorsi   | Max       | mput0002@student.monash.edu | 25%           |
+Ongko       | Timothy   | tong0006@student.monash.edu | 25%           |
+Ibrahim     | Hassan    | ihas0001@student.monash.edu | 25%           | 
 
 complete Worksheet 1 by entering code in the places marked below...
 
