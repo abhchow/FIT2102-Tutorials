@@ -4,9 +4,9 @@ Complete the following table when you submit this file:
 Surname     | Firstname | email                       | Contribution% | Any issues?
 ===================================================================================
 Chow        | Albert    | acho0023@student.monash.edu | 25%           |
-Putamorsi   | Max       |                             | 25%           |
+Putamorsi   | Max       | mput0002@student.monash.edu | 25%           |
 Ongko       | Timothy   | tong0006@student.monash.edu | 25%           |
-Ibrahim     | Hassan    |                             | 25%           |
+Ibrahim     | Hassan    | ihas0001@student.monash.edu | 25%           | 
 
 complete Worksheet 1 by entering code in the places marked below...
 
@@ -23,6 +23,7 @@ browser window to run the test.
     Create a mutable variable called ‘aVariable’ and assign its value to 1.
 */
 // your first line of code here...
+let aVariable = 1;
 
 /*
     Create an immutable variable called ‘aConst’ and assign its value to aVariable + 1.
