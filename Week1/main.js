@@ -22,6 +22,7 @@ browser window to run the test.
     respectively.
     Create a mutable variable called ‘aVariable’ and assign its value to 1.
 */
+
 let aVariable = 1;
 
 /*
