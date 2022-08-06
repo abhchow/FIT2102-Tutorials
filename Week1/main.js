@@ -22,7 +22,6 @@ browser window to run the test.
     respectively.
     Create a mutable variable called ‘aVariable’ and assign its value to 1.
 */
-
 let aVariable = 1;
 
 /*
@@ -37,10 +36,9 @@ const aConst = aVariable + 1;
     set its value to 2 and return anotherVariable.
 */
 function aFunction() {
-    let anotherVariable = 2;
-    return anotherVariable
+	let anotherVariable = 2;
+	return anotherVariable;
 }
-
 
 /**
     Exercise 3:
@@ -48,27 +46,24 @@ function aFunction() {
     mutable variables, a while loop, and returns the answer.
 */
 function projectEulerProblem1() {
-    //sum of all multiples of 3 or 5 below 1000
-    let max = 1000;
-    let sum = 0;
-    let val = 0;
-    while (val<max) {
-        if (val%3 === 0 || val%5 === 0) {
-            sum += val
-        }
-        val += 1
-    }
-    return sum
+	const multipleOf = (x, n) => x % n === 0;
+	const maxNumber = 1000;
+	let result = 0;
+	let i = 1;
+	while (i < maxNumber) {
+		result += multipleOf(i, 3) || multipleOf(i, 5) ? i : 0;
+		i++;
+	}
+	return result;
 }
-
 /**
     Exercise 4:
     Write a function called ‘alwaysTrue’ which always returns true, no matter what argument it is given.
 */
-function alwaysTrue(arg) {
-    return true
-}
-
+//function alwaysTrue() {
+//	return true;
+//}
+const alwaysTrue = (_) => true;
 
 /**
     Write a function called imperativeSummer that takes two parameters: a function f, and a number n.  
@@ -76,13 +71,11 @@ function alwaysTrue(arg) {
     including the number x in the sum only if f(x) is true.
 */
 function imperativeSummer(f, n) {
-    let sum = 0;
-    for (let x = 1; x<n; x++) {
-        if (f(x)) {
-            sum += x
-        }
-    }
-    return sum
+	let result = 0;
+	for (let i = 1; i < n; i++) {
+		result += f(i) ? i : 0;
+	}
+	return result;
 }
 
 /**
@@ -90,27 +83,21 @@ function imperativeSummer(f, n) {
     uses imperativeSummer and alwaysTrue to calculate the sum of all numbers
     from 1 up to (but not including) n.
 */
-function sumTo(n) {
-    return imperativeSummer(alwaysTrue, n)
-}
+const sumTo = (n) => imperativeSummer(alwaysTrue, n);
 
 /**
     Write a function called ‘isDivisibleByThreeOrFive’ which takes a number as parameter,
     tests if it is divisible by 3 or 5, returning true if it is.
 */
-function isDivisibleByThreeOrFive(n) {
-    return n%3===0 || n%5===0
-}
+const isDivisibleByThreeOrFive = (n) => n % 3 === 0 || n % 5 === 0;
 
 /**
     Write a function called projectEulerProblem1UsingImperativeSummer 
     that uses your imperativeSummer and isDivisibleByThreeOrFive to
     again solve Project Euler Problem 1.  It should be one line of code!
 */
-function projectEulerProblem1UsingImperativeSummer() {
-    return imperativeSummer(isDivisibleByThreeOrFive, 1000)
-}
-
+const projectEulerProblem1UsingImperativeSummer = (_) =>
+	imperativeSummer(isDivisibleByThreeOrFive, 1000);
 /**
     Exercise 5:
     Write a function called 'immutableSummer' with parameters f and n, which computes the sum of numbers
@@ -118,15 +105,14 @@ function projectEulerProblem1UsingImperativeSummer() {
     for or any mutable variables (defined with let or var).
     Hint: use recursion!
 */
-function immutableSummer(f, n) {
-    return n-1 ? (f(n-1) ? n-1 : 0) + immutableSummer(f, n-1) : 0 //n-1 because [) indexing
-}
+const recursiveSummer = (f, n, i, result) =>
+	i === n ? result : recursiveSummer(f, n, i + 1, f(i) ? result + i : result);
+const immutableSummer = (f, n) => recursiveSummer(f, n, 1, 0);
 
 /*
     Write a function called projectEulerProblem1UsingImmutableSummer 
     that uses your immutableSummer and isDivisibleByThreeOrFive to
     again solve Project Euler Problem 1.  It should be one line of code!
 */
-function projectEulerProblem1UsingImmutableSummer() {
-    return immutableSummer(isDivisibleByThreeOrFive, 1000)
-}
+const projectEulerProblem1UsingImmutableSummer = (_) =>
+	immutableSummer(isDivisibleByThreeOrFive, 1000);
