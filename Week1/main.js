@@ -1,12 +1,12 @@
 /* 
 Complete the following table when you submit this file:
 
-Surname     | Firstname | email | Contribution% | Any issues?
-=============================================================
-Person 1... | Timothy ONGKO | tong0006@student.monash.edu | 25% | no
-Person 2... |           |       | 0%           |
-Person 3... |           |       | 0%           |
-Person 4... |           |       | 0%           |
+Surname     | Firstname | email                       | Contribution% | Any issues?
+===================================================================================
+Chow        | Albert    | acho0023@student.monash.edu | 25%           |
+Putamorsi   | Max       | mput0002@student.monash.edu | 25%           |
+Ongko       | Timothy   | tong0006@student.monash.edu | 25%           |
+Ibrahim     | Hassan    | ihas0001@student.monash.edu | 25%           | 
 
 complete Worksheet 1 by entering code in the places marked below...
 
