@@ -1,10 +1,10 @@
-// Surname     | Firstname | Contribution % | Any issues?
-// =====================================================
-// Person 1... |           | 25%
-// Person 2... |           | 25%
-// Person 3... |           | 25%
-// Person 4... |           | 25%
-//
+// Surname     | Firstname | email                       | Contribution% | Any issues?
+// ===================================================================================
+// Chow        | Albert    | acho0023@student.monash.edu | 25%           |
+// Putamorsi   | Max       | mput0002@student.monash.edu | 25%           |
+// Ongko       | Timothy   | tong0006@student.monash.edu | 25%           |
+// Ibrahim     | Hassan    | ihas0001@student.monash.edu | 25%           | 
+// 
 // complete Worksheet 2 by entering code in the places marked below...
 //
 // For full instructions and tests open the file worksheetChecklist.html
