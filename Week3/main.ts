@@ -103,6 +103,15 @@ function rest<T>(list: Cons<T>): ConsList<T> {
 }
 
 /**
+ * A function to convert to an array for easier visibility or debugging
+ * @param list the list that will be converted
+ * @param array the accumulated array
+ */
+function toArray<T>(list: Cons<T>, array: T[] = []): T[] {
+	return rest(list) ? toArray(rest(list), array.concat(head(list))) : array;
+}
+
+/**
  * Use this as an example for other functions!
  * @param f Function to use for each element
  * @param list Cons list
@@ -115,10 +124,12 @@ function forEach<T>(f: (_: T) => void, list: ConsList<T>): void {
 }
 
 /**
- * Implement this function! Also, complete this documentation (see forEach).
+ * Generates a new list by taking an operation on each element
+ * @param f Function used for each element in the list
+ * @param l the list being applied by f
  */
 function map<T, V>(f: (_: T) => V, l: ConsList<T>): ConsList<V> {
-	return IMPLEMENT_THIS;
+	return rest(l) ? cons(f(head(l)), map(f, rest(l))) : cons(f(head(l)), null);
 }
 
 /*****************************************************************
