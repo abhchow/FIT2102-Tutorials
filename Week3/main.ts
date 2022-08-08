@@ -4,7 +4,7 @@
  * Chow        | Albert    | acho0023@student.monash.edu | 25%           |
  * Putamorsi   | Max       | mput0002@student.monash.edu | 25%           |
  * Ongko       | Timothy   | tong0006@student.monash.edu | 25%           |
- * Ibrahim     | Hassan    | ihas0001@student.monash.edu | 25%           | 
+ * Ibrahim     | Hassan    | ihas0001@student.monash.edu | 25%           |
  *
  * Please do not hesitate to contact your tutors if there are
  * issues that you cannot resolve within the group.
@@ -24,11 +24,11 @@ const IMPLEMENT_THIS: any = undefined;
  * Exercise 1
  */
 
-function addStuff(a, b) {
-  return a + b;
+function addStuff(a: number, b: number): number {
+	return a + b;
 }
-function numberToString(input) {
-  return JSON.stringify(input);
+function numberToString(input: number): string {
+	return JSON.stringify(input);
 }
 
 /**
@@ -36,25 +36,25 @@ function numberToString(input) {
  * If 'padding' is a string, then 'padding' is appended to the left side.
  * If 'padding' is a number, then that number of spaces is added to the left side.
  */
-function padLeft(value: string, padding) {
-  if (typeof padding === "number") {
-    return Array(padding + 1).join(" ") + value;
-  }
-  if (typeof padding === "string") {
-    return padding + value;
-  }
-  throw new Error(`Expected string or number, got '${padding}'.`);
+function padLeft(value: string, padding: number | string): string {
+	if (typeof padding === "number") {
+		return Array(padding + 1).join(" ") + value;
+	}
+	if (typeof padding === "string") {
+		return padding + value;
+	}
+	throw new Error(`Expected string or number, got '${padding}'.`);
 }
 
 padLeft("Hello world", 4); // returns "    Hello world"
 
 // What's the type of arg0 and arg1?
-function curry(f) {
-  return function (x) {
-    return function (y) {
-      return f(x, y);
-    };
-  };
+function curry<T, U, V>(f: (x: T, y: U) => V): (x: T) => (y: U) => V {
+	return function (x: T) {
+		return function (y: U) {
+			return f(x, y);
+		};
+	};
 }
 
 /*****************************************************************
@@ -81,7 +81,7 @@ type Selector<T> = (head: T, rest: ConsList<T>) => T | ConsList<T>;
  * cons "constructs" a list node, if no second argument is specified it is the last node in the list
  */
 function cons<T>(head: T, rest: ConsList<T>): Cons<T> {
-  return (selector: Selector<T>) => selector(head, rest);
+	return (selector: Selector<T>) => selector(head, rest);
 }
 
 /**
@@ -89,8 +89,8 @@ function cons<T>(head: T, rest: ConsList<T>): Cons<T> {
  * @param list is a Cons (note, not an empty ConsList)
  */
 function head<T>(list: Cons<T>): T {
-  if (!list) throw new TypeError("list is null");
-  return <T>list((head, rest?) => head);
+	if (!list) throw new TypeError("list is null");
+	return <T>list((head, rest?) => head);
 }
 
 /**
@@ -98,8 +98,8 @@ function head<T>(list: Cons<T>): T {
  * @param list is a Cons (note, not an empty ConsList)
  */
 function rest<T>(list: Cons<T>): ConsList<T> {
-  if (!list) throw new TypeError("list is null");
-  return <Cons<T>>list((head, rest?) => rest);
+	if (!list) throw new TypeError("list is null");
+	return <Cons<T>>list((head, rest?) => rest);
 }
 
 /**
@@ -108,17 +108,17 @@ function rest<T>(list: Cons<T>): ConsList<T> {
  * @param list Cons list
  */
 function forEach<T>(f: (_: T) => void, list: ConsList<T>): void {
-  if (list) {
-    f(head(list));
-    forEach(f, rest(list));
-  }
+	if (list) {
+		f(head(list));
+		forEach(f, rest(list));
+	}
 }
 
 /**
  * Implement this function! Also, complete this documentation (see forEach).
  */
 function map<T, V>(f: (_: T) => V, l: ConsList<T>): ConsList<V> {
-  return IMPLEMENT_THIS;
+	return IMPLEMENT_THIS;
 }
 
 /*****************************************************************
@@ -127,14 +127,14 @@ function map<T, V>(f: (_: T) => V, l: ConsList<T>): ConsList<V> {
 
 // Example use of reduce
 function countLetters(stringArray: string[]): number {
-  const list = fromArray(stringArray);
-  return reduce((len: number, s: string) => len + s.length, 0, list);
+	const list = fromArray(stringArray);
+	return reduce((len: number, s: string) => len + s.length, 0, list);
 }
 console.log(countLetters(["Hello", "there!"]));
 
 /*****************************************************************
  * Exercise 4
- * 
+ *
  * Tip: Use the functions in exercise 3!
  */
 
@@ -142,29 +142,29 @@ console.log(countLetters(["Hello", "there!"]));
  * A linked list backed by a ConsList
  */
 class List<T> {
-  private readonly head: ConsList<T>;
+	private readonly head: ConsList<T>;
 
-  constructor(list: T[] | ConsList<T>) {
-    if (list instanceof Array) {
-      // IMPLEMENT THIS. What goes here ??
-    } else {
-      // nullish coalescing operator
-      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator
-      this.head = list ?? null;
-    }
-  }
+	constructor(list: T[] | ConsList<T>) {
+		if (list instanceof Array) {
+			// IMPLEMENT THIS. What goes here ??
+		} else {
+			// nullish coalescing operator
+			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator
+			this.head = list ?? null;
+		}
+	}
 
-  /**
-   * create an array containing all the elements of this List
-   */
-  toArray(): T[] {
-    // Getting type errors here?
-    // Make sure your type annotation for reduce()
-    // in Exercise 3 is correct!
-    return reduce((a, t) => [...a, t], <T[]>[], this.head);
-  }
+	/**
+	 * create an array containing all the elements of this List
+	 */
+	toArray(): T[] {
+		// Getting type errors here?
+		// Make sure your type annotation for reduce()
+		// in Exercise 3 is correct!
+		return reduce((a, t) => [...a, t], <T[]>[], this.head);
+	}
 
-  // Add methods here:
+	// Add methods here:
 }
 
 /*****************************************************************
@@ -178,18 +178,18 @@ class List<T> {
 type BinaryTree<T> = BinaryTreeNode<T> | undefined;
 
 class BinaryTreeNode<T> {
-  constructor(
-    public readonly data: T,
-    public readonly leftChild?: BinaryTree<T>,
-    public readonly rightChild?: BinaryTree<T>
-  ) {}
+	constructor(
+		public readonly data: T,
+		public readonly leftChild?: BinaryTree<T>,
+		public readonly rightChild?: BinaryTree<T>
+	) {}
 }
 
 // example tree:
 const myTree = new BinaryTreeNode(
-  1,
-  new BinaryTreeNode(2, new BinaryTreeNode(3)),
-  new BinaryTreeNode(4)
+	1,
+	new BinaryTreeNode(2, new BinaryTreeNode(3)),
+	new BinaryTreeNode(4)
 );
 
 // *** uncomment the following code once you have implemented List and nest function (above) ***
@@ -215,25 +215,25 @@ const myTree = new BinaryTreeNode(
  */
 
 class NaryTree<T> {
-  constructor(
-    public data: T,
-    public children: List<NaryTree<T>> = new List(undefined)
-  ) {}
+	constructor(
+		public data: T,
+		public children: List<NaryTree<T>> = new List(undefined)
+	) {}
 }
 
 // Example tree for you to print:
 const naryTree = new NaryTree(
-  1,
-  new List([
-    new NaryTree(2),
-    new NaryTree(3, new List([new NaryTree(4)])),
-    new NaryTree(5),
-  ])
+	1,
+	new List([
+		new NaryTree(2),
+		new NaryTree(3, new List([new NaryTree(4)])),
+		new NaryTree(5),
+	])
 );
 
 // Implement: function prettyPrintNaryTree(...)
 function prettyPrintNaryTree<T>(node: NaryTree<T>): List<[number, string]> {
-  return IMPLEMENT_THIS;
+	return IMPLEMENT_THIS;
 }
 
 // *** uncomment the following code once you have implemented prettyPrintNaryTree (above) ***
@@ -248,32 +248,32 @@ function prettyPrintNaryTree<T>(node: NaryTree<T>): List<[number, string]> {
  */
 
 type jsonTypes =
-  | Array<jsonTypes>
-  | { [key: string]: jsonTypes }
-  | string
-  | boolean
-  | number
-  | null;
+	| Array<jsonTypes>
+	| { [key: string]: jsonTypes }
+	| string
+	| boolean
+	| number
+	| null;
 
 const jsonPrettyToDoc: (json: jsonTypes) => List<[number, string]> = (json) => {
-  if (Array.isArray(json)) {
-    // Handle the Array case.
-  } else if (typeof json === "object" && json !== null) {
-    // Handle the object case.
-    // Hint: use Object.keys(json) to get a list of
-    // keys that the object has.
-  } else if (typeof json === "string") {
-    // Handle string case.
-  } else if (typeof json === "number") {
-    // Handle number
-  } else if (typeof json === "boolean") {
-    // Handle the boolean case
-  } else if (json === null) {
-    // Handle the null case
-  }
+	if (Array.isArray(json)) {
+		// Handle the Array case.
+	} else if (typeof json === "object" && json !== null) {
+		// Handle the object case.
+		// Hint: use Object.keys(json) to get a list of
+		// keys that the object has.
+	} else if (typeof json === "string") {
+		// Handle string case.
+	} else if (typeof json === "number") {
+		// Handle number
+	} else if (typeof json === "boolean") {
+		// Handle the boolean case
+	} else if (json === null) {
+		// Handle the null case
+	}
 
-  // Default case to fall back on.
-  return new List<[number, string]>([]);
+	// Default case to fall back on.
+	return new List<[number, string]>([]);
 };
 
 // *** uncomment the following code once you are ready to test your implemented jsonPrettyToDoc ***
