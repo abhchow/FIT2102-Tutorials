@@ -80,7 +80,9 @@ function rest(list) {
  * @param array the accumulated array
  */
 function toArray(list, array = []) {
-    return rest(list) ? toArray(rest(list), array.concat(head(list))) : array;
+    return rest(list)
+        ? toArray(rest(list), array.concat(head(list)))
+        : array.concat(head(list));
 }
 /**
  * Use this as an example for other functions!
@@ -99,17 +101,79 @@ function forEach(f, list) {
  * @param l the list being applied by f
  */
 function map(f, l) {
-    return rest(l) ? cons(f(head(l)), map(f, rest(l))) : cons(f(head(l)), null);
+    return l ? cons(f(head(l)), map(f, rest(l))) : null;
 }
 /*****************************************************************
  * Exercise 3
  */
-// Example use of reduce
-function countLetters(stringArray) {
-    const list = fromArray(stringArray);
-    return reduce((len, s) => len + s.length, 0, list);
+/**
+ * Converts an array into a list
+ * @param array The array being converted
+ * @param l the list being generated
+ */
+function fromArray(array, l = null) {
+    return array.length === 0
+        ? l
+        : cons(array[0], fromArray(array.slice(1), l));
 }
-console.log(countLetters(["Hello", "there!"]));
+/**
+ * Reduces the list
+ * @param f The function that reduces the list
+ * @param initial the initial value (carries over through recursion)
+ * @param list the list being reduced
+ */
+function reduce(f, initial, list) {
+    return list ? reduce(f, f(initial, head(list)), rest(list)) : initial;
+}
+/**
+ * Reduces the list from the right direction
+ * @param f The function that reduces the list
+ * @param initial the initial value (carries over through recursion)
+ * @param list the list being reduced
+ */
+function reduceRight(f, initial, list) {
+    return list ? f(reduceRight(f, initial, rest(list)), head(list)) : initial;
+}
+/**
+ * Deep clones a list
+ * @param list the list being cloned
+ */
+function clone(list, appendList = null, initial = null) {
+    return list
+        ? cons(head(list), clone(rest(list), appendList, initial))
+        : appendList;
+}
+/**
+ * Concatenates two lists
+ * @param leftList the left list
+ * @param rightList the right list
+ */
+function concat(leftList, rightList) {
+    return clone(leftList, clone(rightList));
+}
+/**
+ * Filters the list
+ * @param filterFunction A function that gives the criteria for each element to be kept in the new list
+ * @param list the list being filtered
+ * @param returnList the accumulated list
+ */
+function filter(filterFunction, list, returnList = null) {
+    return list
+        ? filter(filterFunction, rest(list), filterFunction(head(list))
+            ? cons(head(list), returnList)
+            : returnList)
+        : returnList;
+}
+/**
+ * Reverses the elements in the list
+ * @param list the list being reversed
+ * @param returnList the accumulated reversed list
+ */
+function reverse(list, returnList = null) {
+    return list
+        ? reverse(rest(list), concat(cons(head(list), null), returnList))
+        : returnList;
+}
 /*****************************************************************
  * Exercise 4
  *
