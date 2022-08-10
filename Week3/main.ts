@@ -242,16 +242,10 @@ function reverse<T>(
  * A linked list backed by a ConsList
  */
 class List<T> {
-	private readonly head: ConsList<T>;
+	public head: ConsList<T>;
 
 	constructor(list: T[] | ConsList<T>) {
-		if (list instanceof Array) {
-			// IMPLEMENT THIS. What goes here ??
-		} else {
-			// nullish coalescing operator
-			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator
-			this.head = list ?? null;
-		}
+		this.head = (list instanceof Array ? fromArray(list) : list) ?? null;
 	}
 
 	/**
@@ -262,6 +256,26 @@ class List<T> {
 		// Make sure your type annotation for reduce()
 		// in Exercise 3 is correct!
 		return reduce((a, t) => [...a, t], <T[]>[], this.head);
+	}
+
+	map<U>(f: (_: T) => U): ConsList<U> {
+		return map(f, this.head);
+	}
+
+	forEach<U>(f: (_: T) => U): void {
+		forEach(f, this.head);
+	}
+
+	filter(f: (_: T) => boolean): ConsList<T> {
+		return filter(f, this.head);
+	}
+
+	reduce<U>(f: (x: U, y: T) => U, initial: U) {
+		return reduce(f, initial, this.head);
+	}
+
+	concat(rightList: ConsList<T>): ConsList<T> {
+		return clone(this.head, clone(rightList));
 	}
 
 	// Add methods here:

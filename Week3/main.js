@@ -16,8 +16,17 @@
  * You will edit this file, save it, compile it, and reload the
  * browser window to run the test.
  */
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 // Stub value to indicate an implementation
-const IMPLEMENT_THIS = undefined;
+var IMPLEMENT_THIS = undefined;
 /*****************************************************************
  * Exercise 1
  */
@@ -39,7 +48,7 @@ function padLeft(value, padding) {
     if (typeof padding === "string") {
         return padding + value;
     }
-    throw new Error(`Expected string or number, got '${padding}'.`);
+    throw new Error("Expected string or number, got '".concat(padding, "'."));
 }
 padLeft("Hello world", 4); // returns "    Hello world"
 // What's the type of arg0 and arg1?
@@ -54,7 +63,7 @@ function curry(f) {
  * cons "constructs" a list node, if no second argument is specified it is the last node in the list
  */
 function cons(head, rest) {
-    return (selector) => selector(head, rest);
+    return function (selector) { return selector(head, rest); };
 }
 /**
  * head selector, returns the first element in the list
@@ -63,7 +72,7 @@ function cons(head, rest) {
 function head(list) {
     if (!list)
         throw new TypeError("list is null");
-    return list((head, rest) => head);
+    return list(function (head, rest) { return head; });
 }
 /**
  * rest selector, everything but the head
@@ -72,14 +81,15 @@ function head(list) {
 function rest(list) {
     if (!list)
         throw new TypeError("list is null");
-    return list((head, rest) => rest);
+    return list(function (head, rest) { return rest; });
 }
 /**
  * A function to convert to an array for easier visibility or debugging
  * @param list the list that will be converted
  * @param array the accumulated array
  */
-function toArray(list, array = []) {
+function toArray(list, array) {
+    if (array === void 0) { array = []; }
     return rest(list)
         ? toArray(rest(list), array.concat(head(list)))
         : array.concat(head(list));
@@ -111,7 +121,8 @@ function map(f, l) {
  * @param array The array being converted
  * @param l the list being generated
  */
-function fromArray(array, l = null) {
+function fromArray(array, l) {
+    if (l === void 0) { l = null; }
     return array.length === 0
         ? l
         : cons(array[0], fromArray(array.slice(1), l));
@@ -138,7 +149,9 @@ function reduceRight(f, initial, list) {
  * Deep clones a list
  * @param list the list being cloned
  */
-function clone(list, appendList = null, initial = null) {
+function clone(list, appendList, initial) {
+    if (appendList === void 0) { appendList = null; }
+    if (initial === void 0) { initial = null; }
     return list
         ? cons(head(list), clone(rest(list), appendList, initial))
         : appendList;
@@ -157,7 +170,8 @@ function concat(leftList, rightList) {
  * @param list the list being filtered
  * @param returnList the accumulated list
  */
-function filter(filterFunction, list, returnList = null) {
+function filter(filterFunction, list, returnList) {
+    if (returnList === void 0) { returnList = null; }
     return list
         ? filter(filterFunction, rest(list), filterFunction(head(list))
             ? cons(head(list), returnList)
@@ -169,7 +183,8 @@ function filter(filterFunction, list, returnList = null) {
  * @param list the list being reversed
  * @param returnList the accumulated reversed list
  */
-function reverse(list, returnList = null) {
+function reverse(list, returnList) {
+    if (returnList === void 0) { returnList = null; }
     return list
         ? reverse(rest(list), concat(cons(head(list), null), returnList))
         : returnList;
@@ -182,36 +197,47 @@ function reverse(list, returnList = null) {
 /**
  * A linked list backed by a ConsList
  */
-class List {
-    constructor(list) {
-        if (list instanceof Array) {
-            // IMPLEMENT THIS. What goes here ??
-        }
-        else {
-            // nullish coalescing operator
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator
-            this.head = list !== null && list !== void 0 ? list : null;
-        }
+var List = /** @class */ (function () {
+    function List(list) {
+        var _a;
+        this.head = (_a = (list instanceof Array ? fromArray(list) : list)) !== null && _a !== void 0 ? _a : null;
     }
     /**
      * create an array containing all the elements of this List
      */
-    toArray() {
+    List.prototype.toArray = function () {
         // Getting type errors here?
         // Make sure your type annotation for reduce()
         // in Exercise 3 is correct!
-        return reduce((a, t) => [...a, t], [], this.head);
-    }
-}
-class BinaryTreeNode {
-    constructor(data, leftChild, rightChild) {
+        return reduce(function (a, t) { return __spreadArray(__spreadArray([], a, true), [t], false); }, [], this.head);
+    };
+    List.prototype.map = function (f) {
+        return map(f, this.head);
+    };
+    List.prototype.forEach = function (f) {
+        forEach(f, this.head);
+    };
+    List.prototype.filter = function (f) {
+        return filter(f, this.head);
+    };
+    List.prototype.reduce = function (f, initial) {
+        return reduce(f, initial, this.head);
+    };
+    List.prototype.concat = function (rightList) {
+        return clone(this.head, clone(rightList));
+    };
+    return List;
+}());
+var BinaryTreeNode = /** @class */ (function () {
+    function BinaryTreeNode(data, leftChild, rightChild) {
         this.data = data;
         this.leftChild = leftChild;
         this.rightChild = rightChild;
     }
-}
+    return BinaryTreeNode;
+}());
 // example tree:
-const myTree = new BinaryTreeNode(1, new BinaryTreeNode(2, new BinaryTreeNode(3)), new BinaryTreeNode(4));
+var myTree = new BinaryTreeNode(1, new BinaryTreeNode(2, new BinaryTreeNode(3)), new BinaryTreeNode(4));
 // *** uncomment the following code once you have implemented List and nest function (above) ***
 // function prettyPrintBinaryTree<T>(node: BinaryTree<T>): List<[number, string]> {
 //     if (!node) {
@@ -230,14 +256,16 @@ const myTree = new BinaryTreeNode(1, new BinaryTreeNode(2, new BinaryTreeNode(3)
  * Exercise 7: Implement prettyPrintNaryTree, which takes a NaryTree as input
  * and returns a list of the type expected by your nest function
  */
-class NaryTree {
-    constructor(data, children = new List(undefined)) {
+var NaryTree = /** @class */ (function () {
+    function NaryTree(data, children) {
+        if (children === void 0) { children = new List(undefined); }
         this.data = data;
         this.children = children;
     }
-}
+    return NaryTree;
+}());
 // Example tree for you to print:
-const naryTree = new NaryTree(1, new List([
+var naryTree = new NaryTree(1, new List([
     new NaryTree(2),
     new NaryTree(3, new List([new NaryTree(4)])),
     new NaryTree(5),
@@ -246,7 +274,7 @@ const naryTree = new NaryTree(1, new List([
 function prettyPrintNaryTree(node) {
     return IMPLEMENT_THIS;
 }
-const jsonPrettyToDoc = (json) => {
+var jsonPrettyToDoc = function (json) {
     if (Array.isArray(json)) {
         // Handle the Array case.
     }
@@ -312,4 +340,3 @@ const jsonPrettyToDoc = (json) => {
 //         Minizinc
 //     ]
 // }
-//# sourceMappingURL=main.js.map
