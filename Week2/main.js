@@ -57,7 +57,7 @@ const infinite_series_calculator =
 		range(n)
 			.filter(filterFunction)
 			.map(transformFunction)
-			.reduce(reduceFunction);
+			.reduce(reduceFunction, 0);
 
 /**
  * Exercise 8

@@ -16,27 +16,23 @@
  * You will edit this file, save it, compile it, and reload the
  * browser window to run the test.
  */
-
 // Stub value to indicate an implementation
-const IMPLEMENT_THIS: any = undefined;
-
+const IMPLEMENT_THIS = undefined;
 /*****************************************************************
  * Exercise 1
  */
-
-function addStuff(a: number, b: number): number {
+function addStuff(a, b) {
     return a + b;
 }
-function numberToString(input: number): string {
+function numberToString(input) {
     return JSON.stringify(input);
 }
-
 /**
  * Takes a string and adds "padding" to the left.
  * If 'padding' is a string, then 'padding' is appended to the left side.
  * If 'padding' is a number, then that number of spaces is added to the left side.
  */
-function padLeft(value: string, padding: number) {
+function padLeft(value, padding) {
     if (typeof padding === "number") {
         return Array(padding + 1).join(" ") + value;
     }
@@ -45,107 +41,75 @@ function padLeft(value: string, padding: number) {
     }
     throw new Error(`Expected string or number, got '${padding}'.`);
 }
-
 padLeft("Hello world", 4); // returns "    Hello world"
-
 // What's the type of arg0 and arg1?
-function curry<T, U, V>(f: (arg0: T, arg1: U) => V) {
-    return function (x: T) {
-        return function (y: U) {
+function curry(f) {
+    return function (x) {
+        return function (y) {
             return f(x, y);
         };
     };
 }
-
-/*****************************************************************
- * Exercise 2: implement the map function for the cons list below
- */
-
-/**
- * A ConsList is either a function created by cons, or empty (null)
- */
-type ConsList<T> = Cons<T> | null;
-
-/**
- * The return type of the cons function, is itself a function
- * which can be given a selector function to pull out either the head or rest
- */
-type Cons<T> = (selector: Selector<T>) => T | ConsList<T>;
-
-/**
- * a selector will return either the head or rest
- */
-type Selector<T> = (head: T, rest: ConsList<T>) => T | ConsList<T>;
-
 /**
  * cons "constructs" a list node, if no second argument is specified it is the last node in the list
  */
-function cons<T>(head: T, rest: ConsList<T>): Cons<T> {
-    return (selector: Selector<T>) => selector(head, rest);
+function cons(head, rest) {
+    return (selector) => selector(head, rest);
 }
-
 /**
  * head selector, returns the first element in the list
  * @param list is a Cons (note, not an empty ConsList)
  */
-function head<T>(list: Cons<T>): T {
-    if (!list) throw new TypeError("list is null");
-    return <T>list((head, rest?) => head);
+function head(list) {
+    if (!list)
+        throw new TypeError("list is null");
+    return list((head, rest) => head);
 }
-
 /**
  * rest selector, everything but the head
  * @param list is a Cons (note, not an empty ConsList)
  */
-function rest<T>(list: Cons<T>): ConsList<T> {
-    if (!list) throw new TypeError("list is null");
-    return <Cons<T>>list((head, rest?) => rest);
+function rest(list) {
+    if (!list)
+        throw new TypeError("list is null");
+    return list((head, rest) => rest);
 }
-
 /**
  * Use this as an example for other functions!
  * @param f Function to use for each element
  * @param list Cons list
  */
-function forEach<T>(f: (_: T) => void, list: ConsList<T>): void {
+function forEach(f, list) {
     if (list) {
         f(head(list));
         forEach(f, rest(list));
     }
 }
-
 /**
  * Implement this function! Also, complete this documentation (see forEach).
  */
-function map<T, V>(f: (_: T) => V, l: ConsList<T>): ConsList<V> {
+function map(f, l) {
     // return IMPLEMENT_THIS;
     if (l) {
-        return <Cons<V>>cons(f(head(l)), map(f, rest(l)));
-    } else {
+        return cons(f(head(l)), map(f, rest(l)));
+    }
+    else {
         return null;
     }
 }
-
 /*****************************************************************
  * Exercise 3
  */
-
-function fromArray<T>(arr: T[]): ConsList<T> {
-    function fromArrayAux(arr: T[], i: number, n: number): ConsList<T> {
+function fromArray(arr) {
+    function fromArrayAux(arr, i, n) {
         return i < n ? cons(arr[i], fromArrayAux(arr, i + 1, n)) : null;
     }
     return fromArrayAux(arr, 0, arr.length);
 }
-
-function reduce<T, V>(f: (acc: V, val: T) => V, init: V, list: ConsList<T>): V {
+function reduce(f, init, list) {
     return list ? reduce(f, f(init, head(list)), rest(list)) : init;
 }
-
-function reduceRightOld<T, V>(
-    f: (acc: V, val: T) => V,
-    init: V,
-    list: ConsList<T>
-): V {
+function reduceRightOld(f, init, list) {
     return rest(list)
         ? f(reduceRightOld(f, init, rest(list)), head(list))
         : f(init, head(list));
@@ -155,36 +119,25 @@ function reduceRightOld<T, V>(
 // but we can split up the tasks:
 // read everything first, put it in the order we want to calculate things, then reduce tail recursively
 // ie just reverse then reduce
-
-function reduceRight<T, V>(
-    f: (acc: V, val: T) => V,
-    init: V,
-    list: ConsList<T>
-): V {
+function reduceRight(f, init, list) {
     return reduce(f, init, reverse(list));
 }
-
-function filter<T>(f: (val: T) => Boolean, list: ConsList<T>): ConsList<T> {
+function filter(f, list) {
     return list
         ? f(head(list))
             ? cons(head(list), filter(f, rest(list)))
             : filter(f, rest(list))
         : null;
 }
-
-function concat<T>(list1: ConsList<T>, list2: ConsList<T>): ConsList<T> {
+function concat(list1, list2) {
     return list1
         ? cons(head(list1), concat(rest(list1), list2))
         : list2
-        ? cons(head(list2), concat(list1, rest(list2)))
-        : null;
+            ? cons(head(list2), concat(list1, rest(list2)))
+            : null;
 }
-
-function reverse<T>(list: ConsList<T>): ConsList<T> {
-    function reverseHelper<T>(
-        list: ConsList<T>,
-        prevCons: ConsList<T>
-    ): ConsList<T> {
+function reverse(list) {
+    function reverseHelper(list, prevCons) {
         return list
             ? reverseHelper(rest(list), cons(head(list), prevCons))
             : prevCons;
@@ -193,100 +146,74 @@ function reverse<T>(list: ConsList<T>): ConsList<T> {
     // pass it to the next recursive call
     // at the end don't pass it to another recursive call, just return the prevCons
     // prevCons initialised at null, then each recursive call prepends to the prevCons
-
     return reverseHelper(list, null);
 }
-
 // Example use of reduce
-function countLetters(stringArray: string[]): number {
+function countLetters(stringArray) {
     const list = fromArray(stringArray);
-    return reduce((len: number, s: string) => len + s.length, 0, list);
+    return reduce((len, s) => len + s.length, 0, list);
 }
 console.log(countLetters(["Hello", "there!"]));
-
 /*****************************************************************
  * Exercise 4
  *
  * Tip: Use the functions in exercise 3!
  */
-
 /**
  * A linked list backed by a ConsList
  */
-class List<T> {
-    private readonly head: ConsList<T>;
-
-    constructor(list: T[] | ConsList<T>) {
+class List {
+    constructor(list) {
         if (list instanceof Array) {
             this.head = fromArray(list);
-        } else {
+        }
+        else {
             // nullish coalescing operator
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator
-            this.head = list ?? null;
+            this.head = list !== null && list !== void 0 ? list : null;
         }
     }
-
     /**
      * create an array containing all the elements of this List
      */
-    toArray(): T[] {
-        return reduce((a, t) => [...a, t], <T[]>[], this.head);
+    toArray() {
+        return reduce((a, t) => [...a, t], [], this.head);
     }
-
     // Add methods here:
-    forEach(f: (_: T) => void): List<T> {
+    forEach(f) {
         forEach(f, this.head);
         return this.map((x) => x);
     }
-
-    filter(f: (val: T) => Boolean): List<T> {
+    filter(f) {
         return new List(filter(f, this.head));
     }
-
-    map<V>(f: (_: T) => V): List<V> {
+    map(f) {
         return new List(map(f, this.head));
     }
-
-    reduce<V>(f: (acc: V, val: T) => V, init: V): V {
+    reduce(f, init) {
         return reduce(f, init, this.head);
     }
-
-    concat(list: List<T>): List<T> {
+    concat(list) {
         return new List(concat(this.head, list.head));
     }
 }
-
 /*****************************************************************
  * Exercise 5
  */
-const line: (str: string) => [indent: number, str: string] = (str) => [0, str];
-
-function lineToList(line: [number, string]): List<[number, string]> {
+const line = (str) => [0, str];
+function lineToList(line) {
     return new List([line]);
 }
-/*****************************************************************
- * Exercise 6
- */
-
-type BinaryTree<T> = BinaryTreeNode<T> | undefined;
-
-class BinaryTreeNode<T> {
-    constructor(
-        public readonly data: T,
-        public readonly leftChild?: BinaryTree<T>,
-        public readonly rightChild?: BinaryTree<T>
-    ) {}
+class BinaryTreeNode {
+    constructor(data, leftChild, rightChild) {
+        this.data = data;
+        this.leftChild = leftChild;
+        this.rightChild = rightChild;
+    }
 }
-
 // example tree:
-const myTree = new BinaryTreeNode(
-    1,
-    new BinaryTreeNode(2, new BinaryTreeNode(3)),
-    new BinaryTreeNode(4)
-);
-
+const myTree = new BinaryTreeNode(1, new BinaryTreeNode(2, new BinaryTreeNode(3)), new BinaryTreeNode(4));
 // *** uncomment the following code once you have implemented List and nest function (above) ***
-
 // function prettyPrintBinaryTree<T>(node: BinaryTree<T>): List<[number, string]> {
 //     if (!node) {
 //         return new List<[number, string]>([])
@@ -296,24 +223,20 @@ const myTree = new BinaryTreeNode(
 //           rightLines = prettyPrintBinaryTree(node.rightChild);
 //     return thisLine.concat(nest(1, leftLines.concat(rightLines)))
 // }
-
 // const output = prettyPrintBinaryTree(myTree)
 //                     .map(aLine => new Array(aLine[0] + 1).join('-') + aLine[1])
 //                     .reduce((a,b) => a + '\n' + b, '').trim();
 // console.log(output);
-
 // /*****************************************************************
 //  * Exercise 7: Implement prettyPrintNaryTree, which takes a NaryTree as input
 //  * and returns a list of the type expected by your nest function
 //  */
-
 // class NaryTree<T> {
 //   constructor(
 //     public data: T,
 //     public children: List<NaryTree<T>> = new List(undefined)
 //   ) {}
 // }
-
 // // Example tree for you to print:
 // const naryTree = new NaryTree(
 //   1,
@@ -323,23 +246,19 @@ const myTree = new BinaryTreeNode(
 //     new NaryTree(5),
 //   ])
 // );
-
 // // Implement: function prettyPrintNaryTree(...)
 // function prettyPrintNaryTree<T>(node: NaryTree<T>): List<[number, string]> {
 //   return IMPLEMENT_THIS;
 // }
-
 // // *** uncomment the following code once you have implemented prettyPrintNaryTree (above) ***
 // //
 // // const outputNaryTree = prettyPrintNaryTree(naryTree)
 // //                     .map(aLine => new Array(aLine[0] + 1).join('-') + aLine[1])
 // //                     .reduce((a,b) => a + '\n' + b, '').trim();
 // // console.log(outputNaryTree);
-
 // /*****************************************************************
 //  * Exercise 8 (Supplementary)
 //  */
-
 // type jsonTypes =
 //   | Array<jsonTypes>
 //   | { [key: string]: jsonTypes }
@@ -347,7 +266,6 @@ const myTree = new BinaryTreeNode(
 //   | boolean
 //   | number
 //   | null;
-
 // const jsonPrettyToDoc: (json: jsonTypes) => List<[number, string]> = (json) => {
 //   if (Array.isArray(json)) {
 //     // Handle the Array case.
@@ -364,11 +282,9 @@ const myTree = new BinaryTreeNode(
 //   } else if (json === null) {
 //     // Handle the null case
 //   }
-
 //   // Default case to fall back on.
 //   return new List<[number, string]>([]);
 // };
-
 // // *** uncomment the following code once you are ready to test your implemented jsonPrettyToDoc ***
 // // const json = {
 // //     unit: "FIT2102",
@@ -392,7 +308,6 @@ const myTree = new BinaryTreeNode(
 // // console.log(jsonPrettyToDoc(json)
 // //               .map(lineIndented)
 // //               .reduce(appendLine, '').trim());
-
 // // *** This is what it should look like in the console ***
 // //
 // // {
@@ -412,3 +327,4 @@ const myTree = new BinaryTreeNode(
 // //         Minizinc
 // //     ]
 // }
+//# sourceMappingURL=main.js.map
