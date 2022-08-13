@@ -1,5 +1,5 @@
 /**
- * Surname     | Firstname | email                       | Contribution% | Any issues?
+ * Surname     | First name | email                       | Contribution% | Any issues?
  * ===================================================================================
  * Chow        | Albert    | acho0023@student.monash.edu | 25%           |
  * Putamorsi   | Max       | mput0002@student.monash.edu | 25%           |
@@ -212,7 +212,7 @@ function filter<T>(
 				filterFunction,
 				rest(list),
 				filterFunction(head(list))
-					? cons(head(list), returnList)
+					? concat(returnList, cons(head(list), null))
 					: returnList
 		  )
 		: returnList;
@@ -242,10 +242,14 @@ function reverse<T>(
  * A linked list backed by a ConsList
  */
 class List<T> {
-	public head: ConsList<T>;
+	private readonly head: ConsList<T>;
 
-	constructor(list: T[] | ConsList<T>) {
+	constructor(list: T[] | ConsList<T> = []) {
 		this.head = (list instanceof Array ? fromArray(list) : list) ?? null;
+	}
+
+	getHead(): ConsList<T> {
+		return this.head;
 	}
 
 	/**
@@ -258,27 +262,27 @@ class List<T> {
 		return reduce((a, t) => [...a, t], <T[]>[], this.head);
 	}
 
-	map<U>(f: (_: T) => U): ConsList<U> {
-		return map(f, this.head);
+	// Add methods here:
+	map<U>(f: (_: T) => U): List<U> {
+		return new List(map(f, this.head));
 	}
 
-	forEach<U>(f: (_: T) => U): void {
+	forEach<U>(f: (_: T) => U): List<T> {
 		forEach(f, this.head);
+		return this;
 	}
 
-	filter(f: (_: T) => boolean): ConsList<T> {
-		return filter(f, this.head);
+	filter(f: (_: T) => boolean): List<T> {
+		return new List(filter(f, this.head));
 	}
 
-	reduce<U>(f: (x: U, y: T) => U, initial: U) {
+	reduce<U>(f: (x: U, y: T) => U, initial: U): U {
 		return reduce(f, initial, this.head);
 	}
 
-	concat(rightList: ConsList<T>): ConsList<T> {
-		return clone(this.head, clone(rightList));
+	concat(rightList: List<T>): List<T> {
+		return new List(concat(this.head, rightList.getHead()));
 	}
-
-	// Add methods here:
 }
 
 /*****************************************************************
