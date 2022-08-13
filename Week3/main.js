@@ -203,6 +203,9 @@ class List {
     map(f) {
         return new List(map(f, this.head));
     }
+    isEmpty() {
+        return this.head === null;
+    }
     forEach(f) {
         forEach(f, this.head);
         return this;
@@ -258,9 +261,21 @@ const naryTree = new NaryTree(1, new List([
     new NaryTree(5),
 ]));
 // Implement: function prettyPrintNaryTree(...)
-function prettyPrintNaryTree(node) {
-    return IMPLEMENT_THIS;
+function prettyPrintNaryTree(node, depth = 0) {
+    return node.children.reduce((x, y) => x.concat(!y.children.isEmpty()
+        ? prettyPrintNaryTree(y, depth + 1)
+        : new List([[depth + 1, y.data.toString()]])), new List([[depth, node.data.toString()]]));
 }
+const test = new NaryTree(1, new List([
+    new NaryTree(2),
+    new NaryTree(3, new List([new NaryTree(4)])),
+    new NaryTree(5),
+]));
+const outputNaryTree = prettyPrintNaryTree(naryTree)
+    .map((aLine) => new Array(aLine[0] + 1).join("-") + aLine[1])
+    .reduce((a, b) => a + "\n" + b, "")
+    .trim();
+console.log(outputNaryTree);
 const jsonPrettyToDoc = (json) => {
     if (Array.isArray(json)) {
         // Handle the Array case.
