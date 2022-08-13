@@ -314,22 +314,26 @@ const myTree = new BinaryTreeNode(
 	new BinaryTreeNode(4)
 );
 
-// *** uncomment the following code once you have implemented List and nest function (above) ***
+const nest: (indent: number, layout: List<LineType>) => List<LineType> = (
+	indent,
+	layout
+) => layout.map((x) => [x[0] + indent, x[1]]);
 
-// function prettyPrintBinaryTree<T>(node: BinaryTree<T>): List<[number, string]> {
-//     if (!node) {
-//         return new List<[number, string]>([])
-//     }
-//     const thisLine = lineToList(line(node.data.toString())),
-//           leftLines = prettyPrintBinaryTree(node.leftChild),
-//           rightLines = prettyPrintBinaryTree(node.rightChild);
-//     return thisLine.concat(nest(1, leftLines.concat(rightLines)))
-// }
+function prettyPrintBinaryTree<T>(node: BinaryTree<T>): List<[number, string]> {
+	if (!node) {
+		return new List<[number, string]>([]);
+	}
+	const thisLine = lineToList(line(node.data.toString())),
+		leftLines = prettyPrintBinaryTree(node.leftChild),
+		rightLines = prettyPrintBinaryTree(node.rightChild);
+	return thisLine.concat(nest(1, leftLines.concat(rightLines)));
+}
 
-// const output = prettyPrintBinaryTree(myTree)
-//                     .map(aLine => new Array(aLine[0] + 1).join('-') + aLine[1])
-//                     .reduce((a,b) => a + '\n' + b, '').trim();
-// console.log(output);
+const output = prettyPrintBinaryTree(myTree)
+	.map((aLine) => new Array(aLine[0] + 1).join("-") + aLine[1])
+	.reduce((a, b) => a + "\n" + b, "")
+	.trim();
+console.log(output);
 
 /*****************************************************************
  * Exercise 7: Implement prettyPrintNaryTree, which takes a NaryTree as input
