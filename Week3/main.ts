@@ -173,11 +173,7 @@ function filter<T>(f: (val: T) => Boolean, list: ConsList<T>): ConsList<T> {
 }
 
 function concat<T>(list1: ConsList<T>, list2: ConsList<T>): ConsList<T> {
-    return list1
-        ? cons(head(list1), concat(rest(list1), list2))
-        : list2
-        ? cons(head(list2), concat(list1, rest(list2)))
-        : null;
+    return list1 ? cons(head(list1), concat(rest(list1), list2)) : list2;
 }
 
 function reverse<T>(list: ConsList<T>): ConsList<T> {
@@ -278,6 +274,13 @@ class BinaryTreeNode<T> {
     ) {}
 }
 
+function nest(
+    indent: number,
+    layout: List<[number, string]>
+): List<[number, string]> {
+    return layout.map((pair) => [pair[0] + indent, pair[1]]);
+}
+
 // example tree:
 const myTree = new BinaryTreeNode(
     1,
@@ -287,66 +290,82 @@ const myTree = new BinaryTreeNode(
 
 // *** uncomment the following code once you have implemented List and nest function (above) ***
 
-// function prettyPrintBinaryTree<T>(node: BinaryTree<T>): List<[number, string]> {
-//     if (!node) {
-//         return new List<[number, string]>([])
-//     }
-//     const thisLine = lineToList(line(node.data.toString())),
-//           leftLines = prettyPrintBinaryTree(node.leftChild),
-//           rightLines = prettyPrintBinaryTree(node.rightChild);
-//     return thisLine.concat(nest(1, leftLines.concat(rightLines)))
-// }
+function prettyPrintBinaryTree<T>(node: BinaryTree<T>): List<[number, string]> {
+    if (!node) {
+        return new List<[number, string]>([]);
+    }
+    const thisLine = lineToList(line(node.data.toString())),
+        leftLines = prettyPrintBinaryTree(node.leftChild),
+        rightLines = prettyPrintBinaryTree(node.rightChild);
+    return thisLine.concat(nest(1, leftLines.concat(rightLines)));
+}
 
-// const output = prettyPrintBinaryTree(myTree)
-//                     .map(aLine => new Array(aLine[0] + 1).join('-') + aLine[1])
-//                     .reduce((a,b) => a + '\n' + b, '').trim();
-// console.log(output);
+const output = prettyPrintBinaryTree(myTree)
+    .map((aLine) => new Array(aLine[0] + 1).join("-") + aLine[1])
+    .reduce((a, b) => a + "\n" + b, "")
+    .trim();
+console.log(output);
 
 // /*****************************************************************
 //  * Exercise 7: Implement prettyPrintNaryTree, which takes a NaryTree as input
 //  * and returns a list of the type expected by your nest function
 //  */
 
-// class NaryTree<T> {
-//   constructor(
-//     public data: T,
-//     public children: List<NaryTree<T>> = new List(undefined)
-//   ) {}
-// }
+class NaryTree<T> {
+    constructor(
+        public data: T,
+        public children: List<NaryTree<T>> = new List(undefined)
+    ) {}
+}
 
-// // Example tree for you to print:
-// const naryTree = new NaryTree(
-//   1,
-//   new List([
-//     new NaryTree(2),
-//     new NaryTree(3, new List([new NaryTree(4)])),
-//     new NaryTree(5),
-//   ])
-// );
+// Example tree for you to print:
+const naryTree = new NaryTree(
+    1,
+    new List([
+        new NaryTree(2),
+        new NaryTree(3, new List([new NaryTree(4)])),
+        new NaryTree(5),
+    ])
+);
 
-// // Implement: function prettyPrintNaryTree(...)
-// function prettyPrintNaryTree<T>(node: NaryTree<T>): List<[number, string]> {
-//   return IMPLEMENT_THIS;
-// }
+// wrapper function for List to be able to pass it to reduce. Makes it a function of two List types
+function concatList<T>(list1: List<T>, list2: List<T>): List<T> {
+    return list1.concat(list2);
+}
 
-// // *** uncomment the following code once you have implemented prettyPrintNaryTree (above) ***
-// //
-// // const outputNaryTree = prettyPrintNaryTree(naryTree)
-// //                     .map(aLine => new Array(aLine[0] + 1).join('-') + aLine[1])
-// //                     .reduce((a,b) => a + '\n' + b, '').trim();
-// // console.log(outputNaryTree);
+// Implement: function prettyPrintNaryTree(...)
+function prettyPrintNaryTree<T>(node: NaryTree<T>): List<[number, string]> {
+    if (!node) {
+        return new List<[number, string]>([]);
+    }
+    const thisLine = lineToList(line(node.data.toString())),
+        // leftLines = prettyPrintBinaryTree(node.leftChild),
+        // rightLines = prettyPrintBinaryTree(node.rightChild);
+        childLines = node.children.map(prettyPrintNaryTree);
+    // return thisLine.concat(nest(1, leftLines.concat(rightLines)));
+    return thisLine.concat(
+        nest(1, childLines.reduce(concatList, new List<[number, string]>([])))
+    );
+}
+
+// *** uncomment the following code once you have implemented prettyPrintNaryTree (above) ***
+const outputNaryTree = prettyPrintNaryTree(naryTree)
+    .map((aLine) => new Array(aLine[0] + 1).join("-") + aLine[1])
+    .reduce((a, b) => a + "\n" + b, "")
+    .trim();
+console.log(outputNaryTree);
 
 // /*****************************************************************
 //  * Exercise 8 (Supplementary)
 //  */
 
-// type jsonTypes =
-//   | Array<jsonTypes>
-//   | { [key: string]: jsonTypes }
-//   | string
-//   | boolean
-//   | number
-//   | null;
+type jsonTypes =
+    | Array<jsonTypes>
+    | { [key: string]: jsonTypes }
+    | string
+    | boolean
+    | number
+    | null;
 
 // const jsonPrettyToDoc: (json: jsonTypes) => List<[number, string]> = (json) => {
 //   if (Array.isArray(json)) {
