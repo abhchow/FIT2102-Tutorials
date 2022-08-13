@@ -288,6 +288,10 @@ class List<T> {
 /*****************************************************************
  * Exercise 5
  */
+type LineType = [number, string];
+const line: (text: string) => LineType = (text) => [0, text];
+const lineToList: (line: LineType) => List<LineType> = (line) =>
+	new List([line]);
 
 /*****************************************************************
  * Exercise 6

@@ -217,6 +217,8 @@ class List {
         return new List(concat(this.head, rightList.getHead()));
     }
 }
+const line = (text) => [0, text];
+const lineToList = (line) => new List([line]);
 class BinaryTreeNode {
     constructor(data, leftChild, rightChild) {
         this.data = data;
