@@ -122,21 +122,21 @@ function maxNumber(lazyList: LazySequence<number>): number {
 	// lazyList passed in. The lazyList
 	// will terminate so don't use `take`
 	// inside this function body.
-	return IMPLEMENT_THIS;
+	return reduce((x, y) => (x < y ? y : x), lazyList, 0);
 }
 
 function lengthOfSequence(lazyList: LazySequence<any>): number {
 	// ******** YOUR CODE HERE ********
 	// Again only use reduce and don't
 	// use `take` inside this function.
-	return IMPLEMENT_THIS;
+	return reduce((x, _) => x + 1, lazyList, 0);
 }
 
 function toArray<T>(seq: LazySequence<T>): T[] {
 	// ******** YOUR CODE HERE ********
 	// Again only use reduce and don't
 	// use `take` inside this function.
-	return IMPLEMENT_THIS;
+	return reduce((x: T[], y) => x.concat(y), seq, []);
 }
 
 /**

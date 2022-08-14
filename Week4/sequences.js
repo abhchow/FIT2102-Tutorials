@@ -89,19 +89,19 @@ function maxNumber(lazyList) {
     // lazyList passed in. The lazyList
     // will terminate so don't use `take`
     // inside this function body.
-    return IMPLEMENT_THIS;
+    return reduce(function (x, y) { return (x < y ? y : x); }, lazyList, 0);
 }
 function lengthOfSequence(lazyList) {
     // ******** YOUR CODE HERE ********
     // Again only use reduce and don't
     // use `take` inside this function.
-    return IMPLEMENT_THIS;
+    return reduce(function (x, _) { return x + 1; }, lazyList, 0);
 }
 function toArray(seq) {
     // ******** YOUR CODE HERE ********
     // Again only use reduce and don't
     // use `take` inside this function.
-    return IMPLEMENT_THIS;
+    return reduce(function (x, y) { return x.concat(y); }, seq, []);
 }
 /**
  *  Exercise 4 - Lazy Pi Approximations
