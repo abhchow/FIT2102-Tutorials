@@ -242,9 +242,9 @@ const naryTree = new NaryTree(1, new List([
     new NaryTree(5),
 ]));
 // wrapper function for List to be able to pass it to reduce. Makes it a function of two List types
-function concatList(list1, list2) {
-    return list1.concat(list2);
-}
+// function concatList<T>(list1: List<T>, list2: List<T>): List<T> {
+//     return list1.concat(list2);
+// }
 // Implement: function prettyPrintNaryTree(...)
 function prettyPrintNaryTree(node) {
     if (!node) {
@@ -255,7 +255,9 @@ function prettyPrintNaryTree(node) {
     // rightLines = prettyPrintBinaryTree(node.rightChild);
     childLines = node.children.map(prettyPrintNaryTree);
     // return thisLine.concat(nest(1, leftLines.concat(rightLines)));
-    return thisLine.concat(nest(1, childLines.reduce(concatList, new List([]))));
+    return thisLine.concat(
+    // nest(1, childLines.reduce(concatList, new List<[number, string]>([])))
+    nest(1, childLines.reduce((list1, list2) => list1.concat(list2), new List([]))));
 }
 // *** uncomment the following code once you have implemented prettyPrintNaryTree (above) ***
 const outputNaryTree = prettyPrintNaryTree(naryTree)
