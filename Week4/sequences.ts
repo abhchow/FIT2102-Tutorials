@@ -27,15 +27,20 @@ const IMPLEMENT_THIS: any = undefined;
  */
 
 interface LazySequence<T> {
-  value: T;
-  next(): LazySequence<T>;
+	value: T;
+	next(): LazySequence<T>;
 }
 
 // Implement the function:
 function initSequence<T>(
-  transform: (value: T) => T
+	transform: (value: T) => T
 ): (initialValue: T) => LazySequence<T> {
-  return IMPLEMENT_THIS;
+	return function _next(initialValue: T) {
+		return {
+			value: initialValue,
+			next: () => _next(transform(initialValue)),
+		};
+	};
 }
 
 /**
@@ -43,14 +48,14 @@ function initSequence<T>(
  */
 
 function map<T, V>(func: (v: T) => V, seq: LazySequence<T>): LazySequence<V> {
-  return IMPLEMENT_THIS;
+	return IMPLEMENT_THIS;
 }
 
 function filter<T>(
-  func: (v: T) => boolean,
-  seq: LazySequence<T>
+	func: (v: T) => boolean,
+	seq: LazySequence<T>
 ): LazySequence<T> {
-  return IMPLEMENT_THIS;
+	return IMPLEMENT_THIS;
 }
 
 /**
@@ -62,18 +67,18 @@ function filter<T>(
  * @param seq the sequence
  */
 function take<T>(n: number, seq: LazySequence<T>): LazySequence<T> | undefined {
-  if (n <= 0) {
-    return undefined;
-  }
+	if (n <= 0) {
+		return undefined;
+	}
 
-  return {
-    value: seq.value,
-    /**
-     * We have to cast the type here due to the limitations of the TypeScript type system.
-     * If you have to type cast something, make sure to justify it in the comments.
-     */
-    next: () => take(n - 1, seq.next()) as LazySequence<T>,
-  };
+	return {
+		value: seq.value,
+		/**
+		 * We have to cast the type here due to the limitations of the TypeScript type system.
+		 * If you have to type cast something, make sure to justify it in the comments.
+		 */
+		next: () => take(n - 1, seq.next()) as LazySequence<T>,
+	};
 }
 
 /**
@@ -83,19 +88,19 @@ function take<T>(n: number, seq: LazySequence<T>): LazySequence<T> | undefined {
  * @param start starting value of the reduction past as first parameter to first call of func
  */
 function reduce<T, V>(
-  func: (_: V, x: T) => V,
-  seq: LazySequence<T> | undefined,
-  start: V
+	func: (_: V, x: T) => V,
+	seq: LazySequence<T> | undefined,
+	start: V
 ): V {
-  return IMPLEMENT_THIS;
+	return IMPLEMENT_THIS;
 }
 
 function reduceRight<T, V>(
-  f: (_: V, x: T) => V,
-  seq: LazySequence<T> | undefined,
-  start: V
+	f: (_: V, x: T) => V,
+	seq: LazySequence<T> | undefined,
+	start: V
 ): V {
-  return IMPLEMENT_THIS;
+	return IMPLEMENT_THIS;
 }
 
 /**
@@ -103,26 +108,26 @@ function reduceRight<T, V>(
  */
 
 function maxNumber(lazyList: LazySequence<number>): number {
-  // ******** YOUR CODE HERE ********
-  // Use __only__ reduce on the
-  // lazyList passed in. The lazyList
-  // will terminate so don't use `take`
-  // inside this function body.
-  return IMPLEMENT_THIS;
+	// ******** YOUR CODE HERE ********
+	// Use __only__ reduce on the
+	// lazyList passed in. The lazyList
+	// will terminate so don't use `take`
+	// inside this function body.
+	return IMPLEMENT_THIS;
 }
 
 function lengthOfSequence(lazyList: LazySequence<any>): number {
-  // ******** YOUR CODE HERE ********
-  // Again only use reduce and don't
-  // use `take` inside this function.
-  return IMPLEMENT_THIS;
+	// ******** YOUR CODE HERE ********
+	// Again only use reduce and don't
+	// use `take` inside this function.
+	return IMPLEMENT_THIS;
 }
 
 function toArray<T>(seq: LazySequence<T>): T[] {
-  // ******** YOUR CODE HERE ********
-  // Again only use reduce and don't
-  // use `take` inside this function.
-  return IMPLEMENT_THIS;
+	// ******** YOUR CODE HERE ********
+	// Again only use reduce and don't
+	// use `take` inside this function.
+	return IMPLEMENT_THIS;
 }
 
 /**
@@ -130,7 +135,7 @@ function toArray<T>(seq: LazySequence<T>): T[] {
  */
 
 function exercise4Solution(seriesLength: number): number {
-  // Your solution using lazy lists.
-  // Use `take` to only take the right amount of the infinite list.
-  return IMPLEMENT_THIS;
+	// Your solution using lazy lists.
+	// Use `take` to only take the right amount of the infinite list.
+	return IMPLEMENT_THIS;
 }
