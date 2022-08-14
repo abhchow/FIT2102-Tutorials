@@ -33,10 +33,15 @@ function initSequence(transform) {
  *  Exercise 2 - map, filter, take, reduce
  */
 function map(func, seq) {
-    return IMPLEMENT_THIS;
+    return {
+        value: func(seq.value),
+        next: function () { return map(func, seq.next()); }
+    };
 }
 function filter(func, seq) {
-    return IMPLEMENT_THIS;
+    return func(seq.value)
+        ? { value: seq.value, next: function () { return filter(func, seq.next()); } }
+        : filter(func, seq.next());
 }
 /**
  * Creates a sequence of finite length (terminated by undefined) from a longer or infinite sequence.
@@ -66,10 +71,14 @@ function take(n, seq) {
  * @param start starting value of the reduction past as first parameter to first call of func
  */
 function reduce(func, seq, start) {
-    return IMPLEMENT_THIS;
+    return seq === undefined
+        ? start
+        : reduce(func, seq.next(), func(start, seq.value));
 }
 function reduceRight(f, seq, start) {
-    return IMPLEMENT_THIS;
+    return seq === undefined
+        ? start
+        : f(reduceRight(f, seq.next(), start), seq.value);
 }
 /**
  *  Exercise 3 - Reduce Practice

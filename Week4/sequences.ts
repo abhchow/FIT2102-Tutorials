@@ -48,14 +48,19 @@ function initSequence<T>(
  */
 
 function map<T, V>(func: (v: T) => V, seq: LazySequence<T>): LazySequence<V> {
-	return IMPLEMENT_THIS;
+	return {
+		value: func(seq.value),
+		next: () => map(func, seq.next()),
+	};
 }
 
 function filter<T>(
 	func: (v: T) => boolean,
 	seq: LazySequence<T>
 ): LazySequence<T> {
-	return IMPLEMENT_THIS;
+	return func(seq.value)
+		? { value: seq.value, next: () => filter(func, seq.next()) }
+		: filter(func, seq.next());
 }
 
 /**
@@ -92,7 +97,9 @@ function reduce<T, V>(
 	seq: LazySequence<T> | undefined,
 	start: V
 ): V {
-	return IMPLEMENT_THIS;
+	return seq === undefined
+		? start
+		: reduce(func, seq.next(), func(start, seq.value));
 }
 
 function reduceRight<T, V>(
@@ -100,7 +107,9 @@ function reduceRight<T, V>(
 	seq: LazySequence<T> | undefined,
 	start: V
 ): V {
-	return IMPLEMENT_THIS;
+	return seq === undefined
+		? start
+		: f(reduceRight(f, seq.next(), start), seq.value);
 }
 
 /**
