@@ -142,9 +142,33 @@ function toArray<T>(seq: LazySequence<T>): T[] {
 /**
  *  Exercise 4 - Lazy Pi Approximations
  */
+function pi4Term(n: number) {
+	return ((-1) ** (n + 1) * 1) / (2 * n - 1);
+}
+
+function pi4Approx(): LazySequence<number> {
+	return (function _next(term: number, value: number): LazySequence<number> {
+		return {
+			value: value,
+			next: () => _next(term + 1, value + pi4Term(term + 1)),
+		};
+	})(1, 1);
+}
+
+function takeLastTerm<T>(
+	seq: LazySequence<T> | undefined,
+	returnValue: T | null = null
+): T | null {
+	return seq === undefined
+		? returnValue
+		: takeLastTerm(seq.next(), seq.value);
+}
 
 function exercise4Solution(seriesLength: number): number {
 	// Your solution using lazy lists.
 	// Use `take` to only take the right amount of the infinite list.
-	return IMPLEMENT_THIS;
+
+	// Casting needed her as TS doesn't know when it will null or a number, however, we always know it will be a number
+	// given that the series isn't undefined to begin with (will be null when seriesLength = 0).
+	return takeLastTerm(take(seriesLength, pi4Approx())) as number;
 }
