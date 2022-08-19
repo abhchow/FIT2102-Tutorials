@@ -27,15 +27,20 @@ const IMPLEMENT_THIS: any = undefined;
  */
 
 interface LazySequence<T> {
-  value: T;
-  next(): LazySequence<T>;
+	value: T;
+	next(): LazySequence<T>;
 }
 
 // Implement the function:
 function initSequence<T>(
-  transform: (value: T) => T
+	transform: (value: T) => T
 ): (initialValue: T) => LazySequence<T> {
-  return IMPLEMENT_THIS;
+	return function _next(initialValue: T) {
+		return {
+			value: initialValue,
+			next: () => _next(transform(initialValue)),
+		};
+	};
 }
 
 /**
@@ -43,14 +48,19 @@ function initSequence<T>(
  */
 
 function map<T, V>(func: (v: T) => V, seq: LazySequence<T>): LazySequence<V> {
-  return IMPLEMENT_THIS;
+	return {
+		value: func(seq.value),
+		next: () => map(func, seq.next()),
+	};
 }
 
 function filter<T>(
-  func: (v: T) => boolean,
-  seq: LazySequence<T>
+	func: (v: T) => boolean,
+	seq: LazySequence<T>
 ): LazySequence<T> {
-  return IMPLEMENT_THIS;
+	return func(seq.value)
+		? { value: seq.value, next: () => filter(func, seq.next()) }
+		: filter(func, seq.next());
 }
 
 /**
@@ -62,18 +72,18 @@ function filter<T>(
  * @param seq the sequence
  */
 function take<T>(n: number, seq: LazySequence<T>): LazySequence<T> | undefined {
-  if (n <= 0) {
-    return undefined;
-  }
+	if (n <= 0) {
+		return undefined;
+	}
 
-  return {
-    value: seq.value,
-    /**
-     * We have to cast the type here due to the limitations of the TypeScript type system.
-     * If you have to type cast something, make sure to justify it in the comments.
-     */
-    next: () => take(n - 1, seq.next()) as LazySequence<T>,
-  };
+	return {
+		value: seq.value,
+		/**
+		 * We have to cast the type here due to the limitations of the TypeScript type system.
+		 * If you have to type cast something, make sure to justify it in the comments.
+		 */
+		next: () => take(n - 1, seq.next()) as LazySequence<T>,
+	};
 }
 
 /**
@@ -83,19 +93,23 @@ function take<T>(n: number, seq: LazySequence<T>): LazySequence<T> | undefined {
  * @param start starting value of the reduction past as first parameter to first call of func
  */
 function reduce<T, V>(
-  func: (_: V, x: T) => V,
-  seq: LazySequence<T> | undefined,
-  start: V
+	func: (_: V, x: T) => V,
+	seq: LazySequence<T> | undefined,
+	start: V
 ): V {
-  return IMPLEMENT_THIS;
+	return seq === undefined
+		? start
+		: reduce(func, seq.next(), func(start, seq.value));
 }
 
 function reduceRight<T, V>(
-  f: (_: V, x: T) => V,
-  seq: LazySequence<T> | undefined,
-  start: V
+	f: (_: V, x: T) => V,
+	seq: LazySequence<T> | undefined,
+	start: V
 ): V {
-  return IMPLEMENT_THIS;
+	return seq === undefined
+		? start
+		: f(reduceRight(f, seq.next(), start), seq.value);
 }
 
 /**
@@ -103,34 +117,58 @@ function reduceRight<T, V>(
  */
 
 function maxNumber(lazyList: LazySequence<number>): number {
-  // ******** YOUR CODE HERE ********
-  // Use __only__ reduce on the
-  // lazyList passed in. The lazyList
-  // will terminate so don't use `take`
-  // inside this function body.
-  return IMPLEMENT_THIS;
+	// ******** YOUR CODE HERE ********
+	// Use __only__ reduce on the
+	// lazyList passed in. The lazyList
+	// will terminate so don't use `take`
+	// inside this function body.
+	return reduce((x, y) => (x < y ? y : x), lazyList, 0);
 }
 
 function lengthOfSequence(lazyList: LazySequence<any>): number {
-  // ******** YOUR CODE HERE ********
-  // Again only use reduce and don't
-  // use `take` inside this function.
-  return IMPLEMENT_THIS;
+	// ******** YOUR CODE HERE ********
+	// Again only use reduce and don't
+	// use `take` inside this function.
+	return reduce((x, _) => x + 1, lazyList, 0);
 }
 
 function toArray<T>(seq: LazySequence<T>): T[] {
-  // ******** YOUR CODE HERE ********
-  // Again only use reduce and don't
-  // use `take` inside this function.
-  return IMPLEMENT_THIS;
+	// ******** YOUR CODE HERE ********
+	// Again only use reduce and don't
+	// use `take` inside this function.
+	return reduce((x: T[], y) => x.concat(y), seq, []);
 }
 
 /**
  *  Exercise 4 - Lazy Pi Approximations
  */
+function pi4Term(n: number) {
+	return ((-1) ** (n + 1) * 1) / (2 * n - 1);
+}
+
+function pi4Approx(): LazySequence<number> {
+	return (function _next(term: number, value: number): LazySequence<number> {
+		return {
+			value: value,
+			next: () => _next(term + 1, value + pi4Term(term + 1)),
+		};
+	})(1, 1);
+}
+
+function takeLastTerm<T>(
+	seq: LazySequence<T> | undefined,
+	returnValue: T | null = null
+): T | null {
+	return seq === undefined
+		? returnValue
+		: takeLastTerm(seq.next(), seq.value);
+}
 
 function exercise4Solution(seriesLength: number): number {
-  // Your solution using lazy lists.
-  // Use `take` to only take the right amount of the infinite list.
-  return IMPLEMENT_THIS;
+	// Your solution using lazy lists.
+	// Use `take` to only take the right amount of the infinite list.
+
+	// Casting needed her as TS doesn't know when it will null or a number, however, we always know it will be a number
+	// given that the series isn't undefined to begin with (will be null when seriesLength = 0).
+	return takeLastTerm(take(seriesLength, pi4Approx())) as number;
 }
