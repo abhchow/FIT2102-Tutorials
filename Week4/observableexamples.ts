@@ -209,6 +209,25 @@ function animatedRect() {
 	// Your code starts here!
 	// =========================================================================================
 	// ...
+	const intervalStream = interval(10).pipe((time) => time);
+	const svg = document.getElementById("animatedRect")!;
+	const rect = document.createElementNS(svg.namespaceURI, "rect");
+	Object.entries({
+		x: 100,
+		y: 70,
+		width: 120,
+		height: 80,
+		fill: "#95B3D7",
+	}).forEach(([key, val]) => rect.setAttribute(key, String(val)));
+	svg.appendChild(rect);
+
+	const subscription = intervalStream.subscribe((_) =>
+		rect.setAttribute("x", String(1 + Number(rect.getAttribute("x"))))
+	);
+
+	intervalStream.subscribe((time) =>
+		time > 100 ? subscription.unsubscribe() : null
+	);
 }
 
 // Exercise 7
@@ -238,7 +257,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 	//mousePosEvents();
 	mousePosObservable();
 
-	animatedRectTimer();
+	animatedRect();
 	// replace the above call with the following once you have implemented it:
 	//animatedRect()
 	keyboardControl();
