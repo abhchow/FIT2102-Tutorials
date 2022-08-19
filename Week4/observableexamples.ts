@@ -163,9 +163,9 @@ function piApproximation() {
 
 	// A stream of random numbers
 	const randomNumberStream = interval(50).pipe(map(nextRandom));
-	// randomNumberStream.subscribe((number) =>
-	// 	createDot({ x: number, y: nextRandom() })
-	// );
+	randomNumberStream.subscribe((number) =>
+		createDot({ x: number, y: nextRandom() })
+	);
 }
 
 // Exercise 6
@@ -244,6 +244,49 @@ function keyboardControl() {
 	// Your code starts here!
 	// =========================================================================================
 	// ...
+	const key$ = fromEvent<KeyboardEvent>(document, "keydown");
+
+	key$.pipe(map((e) => e.key)).subscribe((key) =>
+		key === "a" ? moveLeft(rect) : null
+	);
+
+	key$.pipe(map((e) => e.key)).subscribe((key) =>
+		key === "d" ? moveRight(rect) : null
+	);
+
+	key$.pipe(map((e) => e.key)).subscribe((key) =>
+		key === "w" ? moveUp(rect) : null
+	);
+
+	key$.pipe(map((e) => e.key)).subscribe((key) =>
+		key === "s" ? moveDown(rect) : null
+	);
+
+	const rect = document.createElementNS(svg.namespaceURI, "rect");
+	Object.entries({
+		x: 100,
+		y: 70,
+		width: 120,
+		height: 80,
+		fill: "#95B3D7",
+	}).forEach(([key, val]) => rect.setAttribute(key, String(val)));
+	svg.appendChild(rect);
+}
+
+function moveRight(rect: Element) {
+	rect.setAttribute("x", String(1 + Number(rect.getAttribute("x"))));
+}
+
+function moveLeft(rect: Element) {
+	rect.setAttribute("x", String(-1 + Number(rect.getAttribute("x"))));
+}
+
+function moveDown(rect: Element) {
+	rect.setAttribute("y", String(1 + Number(rect.getAttribute("y"))));
+}
+
+function moveUp(rect: Element) {
+	rect.setAttribute("y", String(-1 + Number(rect.getAttribute("y"))));
 }
 
 // Running the code
@@ -257,8 +300,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
 	//mousePosEvents();
 	mousePosObservable();
 
-	animatedRect();
+	//animatedRectTimer();
 	// replace the above call with the following once you have implemented it:
-	//animatedRect()
+	animatedRect();
 	keyboardControl();
 });
