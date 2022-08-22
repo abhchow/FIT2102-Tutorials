@@ -17,8 +17,8 @@
  * browser window to run the test.
  */
 
-import { interval, fromEvent } from "rxjs";
-import { map, filter } from "rxjs/operators";
+import { interval, fromEvent, zip } from "rxjs";
+import { map, filter, scan } from "rxjs/operators";
 
 // Simple demonstration
 // ===========================================================================================
@@ -30,17 +30,17 @@ import { map, filter } from "rxjs/operators";
  * handler, sets p and adds or removes a highlight depending on x position
  */
 function mousePosEvents() {
-  const pos = document.getElementById("pos")!;
+    const pos = document.getElementById("pos")!;
 
-  document.addEventListener("mousemove", ({ clientX, clientY }) => {
-    const p = clientX + ", " + clientY;
-    pos.innerHTML = p;
-    if (clientX > 400) {
-      pos.classList.add("highlight");
-    } else {
-      pos.classList.remove("highlight");
-    }
-  });
+    document.addEventListener("mousemove", ({ clientX, clientY }) => {
+        const p = clientX + ", " + clientY;
+        pos.innerHTML = p;
+        if (clientX > 400) {
+            pos.classList.add("highlight");
+        } else {
+            pos.classList.remove("highlight");
+        }
+    });
 }
 
 /**
@@ -51,96 +51,137 @@ function mousePosEvents() {
  *    |- remove highlight
  */
 function mousePosObservable() {
-  const pos = document.getElementById("pos")!,
-    o = fromEvent<MouseEvent>(document, "mousemove").pipe(
-      map(({ clientX, clientY }) => ({ x: clientX, y: clientY }))
+    const pos = document.getElementById("pos")!,
+        o = fromEvent<MouseEvent>(document, "mousemove").pipe(
+            map(({ clientX, clientY }) => ({ x: clientX, y: clientY }))
+        );
+
+    o.pipe(map(({ x, y }) => `${x},${y}`)).subscribe(
+        (s: string) => (pos.innerHTML = s)
     );
 
-  o.pipe(map(({ x, y }) => `${x},${y}`)).subscribe(
-    (s: string) => (pos.innerHTML = s)
-  );
+    o.pipe(filter(({ x }) => x > 400)).subscribe((_) =>
+        pos.classList.add("highlight")
+    );
 
-  o.pipe(filter(({ x }) => x > 400)).subscribe((_) =>
-    pos.classList.add("highlight")
-  );
-
-  o.pipe(filter(({ x }) => x <= 400)).subscribe(({ x, y }) => {
-    pos.classList.remove("highlight");
-  });
+    o.pipe(filter(({ x }) => x <= 400)).subscribe(({ x, y }) => {
+        pos.classList.remove("highlight");
+    });
 }
 
 // Exercise 5
 // ===========================================================================================
 // ===========================================================================================
 function piApproximation() {
-  // a simple, seedable, pseudo-random number generator
-  class RNG {
-    // LCG using GCC's constants
-    m = 0x80000000; // 2**31
-    a = 1103515245;
-    c = 12345;
-    state: number;
-    constructor(seed: number) {
-      this.state = seed ? seed : Math.floor(Math.random() * (this.m - 1));
+    // a simple, seedable, pseudo-random number generator
+    class RNG {
+        // LCG using GCC's constants
+        m = 0x80000000; // 2**31
+        a = 1103515245;
+        c = 12345;
+        state: number;
+        constructor(seed: number) {
+            this.state = seed ? seed : Math.floor(Math.random() * (this.m - 1));
+        }
+        nextInt() {
+            this.state = (this.a * this.state + this.c) % this.m;
+            return this.state;
+        }
+        nextFloat() {
+            // returns in range [0,1]
+            return this.nextInt() / (this.m - 1);
+        }
     }
-    nextInt() {
-      this.state = (this.a * this.state + this.c) % this.m;
-      return this.state;
+
+    const resultInPage = document.getElementById("value_piApproximation"),
+        canvas = document.getElementById("piApproximationVis");
+
+    if (!resultInPage || !canvas) {
+        console.log("Not on the observableexamples.html page");
+        return;
     }
-    nextFloat() {
-      // returns in range [0,1]
-      return this.nextInt() / (this.m - 1);
+
+    // Some handy types for passing data around
+    type Colour = "red" | "green";
+    type Dot = { x: number; y: number; colour?: Colour };
+    interface Data {
+        point?: Dot;
+        insideCount: number;
+        totalCount: number;
     }
-  }
 
-  const resultInPage = document.getElementById("value_piApproximation"),
-    canvas = document.getElementById("piApproximationVis");
+    // an instance of the Random Number Generator with a specific seed
+    const rng = new RNG(20);
+    // return a random number in the range [-1,1]
+    const nextRandom = () => rng.nextFloat() * 2 - 1;
+    // you'll need the circleDiameter to scale the dots to fit the canvas
+    const circleRadius = Number(canvas.getAttribute("width")) / 2;
+    // test if a point is inside a unit circle
+    const inCircle = ({ x, y }: Dot) => x * x + y * y <= 1;
+    // you'll also need to set innerText with the pi approximation
+    resultInPage.innerText =
+        "...Update this text to show the Pi approximation...";
 
-  if (!resultInPage || !canvas) {
-    console.log("Not on the observableexamples.html page");
-    return;
-  }
+    // Your code starts here!
+    // =========================================================================================
+    
+    function updateApprox(pointData: Data) {
+        resultInPage.innerText =
+            "Current Approximation of Pi is " +
+            String((4 * pointData.insideCount) / pointData.totalCount);
+    }
 
-  // Some handy types for passing data around
-  type Colour = "red" | "green";
-  type Dot = { x: number; y: number; colour?: Colour };
-  interface Data {
-    point?: Dot;
-    insideCount: number;
-    totalCount: number;
-  }
+    function pointsToDots(dot: Dot): Dot {
+        return ({
+            x: circleRadius * (dot.x + 1),
+            y: circleRadius * (dot.y + 1),
+            colour: inCircle(dot) ? "green" : "red",
+        })
+    }
+    
+    function dataScan(data: Data, dot: Dot): Data {
+        return {
+            point: dot,
+            insideCount: data.insideCount + (inCircle(dot) ? 1 : 0),
+            totalCount: data.totalCount + 1
+        }
+    }
 
-  // an instance of the Random Number Generator with a specific seed
-  const rng = new RNG(20);
-  // return a random number in the range [-1,1]
-  const nextRandom = () => rng.nextFloat() * 2 - 1;
-  // you'll need the circleDiameter to scale the dots to fit the canvas
-  const circleRadius = Number(canvas.getAttribute("width")) / 2;
-  // test if a point is inside a unit circle
-  const inCircle = ({ x, y }: Dot) => x * x + y * y <= 1;
-  // you'll also need to set innerText with the pi approximation
-  resultInPage.innerText =
-    "...Update this text to show the Pi approximation...";
+    function createDot(dataInfo: Data) {
+        if (!canvas) throw "Couldn't get canvas element!";
+        const dot = document.createElementNS(canvas.namespaceURI, "circle");
+        const x = dataInfo.point.x,
+            y = dataInfo.point.y;
 
-  // Your code starts here!
-  // =========================================================================================
-  function createDot(/* what parameters do we need to plot dots at different locations and in red or green? Use the types above! */) {
-    if (!canvas) throw "Couldn't get canvas element!";
-    const dot = document.createElementNS(canvas.namespaceURI, "circle");
-    const x = 50,
-      y = 50; // all points are at 50,50!
-    // Set circle properties
-    dot.setAttribute("cx", String(x));
-    dot.setAttribute("cy", String(y));
-    dot.setAttribute("r", "5");
-    dot.setAttribute("fill", "red"); // All points red
+        // Set circle properties
+        dot.setAttribute("cx", String(x));
+        dot.setAttribute("cy", String(y));
+        dot.setAttribute("r", "2");
+        dot.setAttribute("fill", dataInfo.point.colour);
 
-    // Add the dot to the canvas
-    canvas.appendChild(dot);
-  }
+        // Add the dot to the canvas
+        canvas.appendChild(dot);
+        updateApprox(dataInfo)
+    }
 
-  // A stream of random numbers
-  const randomNumberStream = interval(50).pipe(map(nextRandom));
+    // A stream of random numbers
+    const time = 50;
+    const randStreamX = interval(time).pipe(map(nextRandom));
+    const randStreamY = interval(time).pipe(map(nextRandom));
+    const points = zip(randStreamX, randStreamY).pipe(
+        map(([xStream, yStream]) => ({ x: xStream, y: yStream }))
+    );
+
+    const dataStream = points.pipe(
+        scan(dataScan, {insideCount: 0, totalCount: 0}),
+        map((data: Data) => <Data>({
+            point: pointsToDots(data.point),
+            insideCount: data.insideCount,
+            totalCount: data.totalCount
+        }))
+    )
+
+    dataStream.subscribe(createDot);
 }
 
 // Exercise 6
@@ -151,27 +192,28 @@ function piApproximation() {
  * a rectangle smoothly moves to the right for 1 second.
  */
 function animatedRectTimer() {
-  // get the svg canvas element
-  const svg = document.getElementById("animatedRect")!;
-  // create the rect
-  const rect = document.createElementNS(svg.namespaceURI, "rect");
-  Object.entries({
-    x: 100,
-    y: 70,
-    width: 120,
-    height: 80,
-    fill: "#95B3D7",
-  }).forEach(([key, val]) => rect.setAttribute(key, String(val)));
-  svg.appendChild(rect);
+    // get the svg canvas element
+    const svg = document.getElementById("animatedRect")!;
+    // create the rect
+    const rect = document.createElementNS(svg.namespaceURI, "rect");
+    Object.entries({
+        x: 100,
+        y: 70,
+        width: 120,
+        height: 80,
+        fill: "#95B3D7",
+    }).forEach(([key, val]) => rect.setAttribute(key, String(val)));
+    svg.appendChild(rect);
 
-  const animate = setInterval(
-    () => rect.setAttribute("x", String(1 + Number(rect.getAttribute("x")))),
-    10
-  );
-  const timer = setInterval(() => {
-    clearInterval(animate);
-    clearInterval(timer);
-  }, 1000);
+    const animate = setInterval(
+        () =>
+            rect.setAttribute("x", String(1 + Number(rect.getAttribute("x")))),
+        10
+    );
+    const timer = setInterval(() => {
+        clearInterval(animate);
+        clearInterval(timer);
+    }, 1000);
 }
 
 /**
@@ -180,9 +222,9 @@ function animatedRectTimer() {
  * It terminates after 1 second (1000 milliseconds)
  */
 function animatedRect() {
-  // Your code starts here!
-  // =========================================================================================
-  // ...
+    // Your code starts here!
+    // =========================================================================================
+    // ...
 }
 
 // Exercise 7
@@ -193,27 +235,27 @@ function animatedRect() {
  * If statements
  */
 function keyboardControl() {
-  // get the svg canvas element
-  const svg = document.getElementById("moveableRect")!;
+    // get the svg canvas element
+    const svg = document.getElementById("moveableRect")!;
 
-  // Your code starts here!
-  // =========================================================================================
-  // ...
+    // Your code starts here!
+    // =========================================================================================
+    // ...
 }
 
 // Running the code
 // ===========================================================================================
 // ===========================================================================================
 document.addEventListener("DOMContentLoaded", function (event) {
-  piApproximation();
+    piApproximation();
 
-  // compare mousePosEvents and mousePosObservable for equivalent implementations
-  // of mouse handling with events and then with Observable, respectively.
-  //mousePosEvents();
-  mousePosObservable();
+    // compare mousePosEvents and mousePosObservable for equivalent implementations
+    // of mouse handling with events and then with Observable, respectively.
+    //mousePosEvents();
+    mousePosObservable();
 
-  animatedRectTimer();
-  // replace the above call with the following once you have implemented it:
-  //animatedRect()
-  keyboardControl();
+    animatedRectTimer();
+    // replace the above call with the following once you have implemented it:
+    //animatedRect()
+    keyboardControl();
 });
