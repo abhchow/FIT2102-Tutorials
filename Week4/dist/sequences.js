@@ -16,26 +16,13 @@
  * You will edit this file (main.ts), save it, build it, and reload the
  * browser window to run the test.
  */
-
 /**
  * Replace references to IMPLEMENT_THIS with your code!
  */
-const IMPLEMENT_THIS: any = undefined;
-
-/**
- *  Exercise 1 - General Purpose infinite sequence function
- */
-
-interface LazySequence<T> {
-    value: T;
-    next(): LazySequence<T>;
-}
-
+const IMPLEMENT_THIS = undefined;
 // Implement the function:
-function initSequence<T>(
-    transform: (value: T) => T
-): (initialValue: T) => LazySequence<T> {
-    return function _next(init: T) {
+function initSequence(transform) {
+    return function _next(init) {
         return {
             value: init,
             next: () => _next(transform(init)),
@@ -45,23 +32,17 @@ function initSequence<T>(
 /**
  *  Exercise 2 - map, filter, take, reduce
  */
-
-function map<T, V>(func: (v: T) => V, seq: LazySequence<T>): LazySequence<V> {
+function map(func, seq) {
     return {
         value: func(seq.value),
         next: () => map(func, seq.next()),
     };
 }
-
-function filter<T>(
-    func: (v: T) => boolean,
-    seq: LazySequence<T>
-): LazySequence<T> {
+function filter(func, seq) {
     return func(seq.value)
         ? { value: seq.value, next: () => filter(func, seq.next()) }
         : filter(func, seq.next());
 }
-
 /**
  * Creates a sequence of finite length (terminated by undefined) from a longer or infinite sequence.
  * Take returns a sequence that contains the specified number of elements of the sequence, and then 'undefined'.
@@ -70,98 +51,64 @@ function filter<T>(
  * @param n number of elements to return before returning undefined
  * @param seq the sequence
  */
-function take<T>(n: number, seq: LazySequence<T>): LazySequence<T> | undefined {
+function take(n, seq) {
     if (n <= 0) {
         return undefined;
     }
-
     return {
         value: seq.value,
         /**
          * We have to cast the type here due to the limitations of the TypeScript type system.
          * If you have to type cast something, make sure to justify it in the comments.
          */
-        next: () => take(n - 1, seq.next()) as LazySequence<T>,
+        next: () => take(n - 1, seq.next()),
     };
 }
-
 /**
  * reduce a finite sequence to a value using the specified aggregation function
  * @param func aggregation function
  * @param seq either a sequence or undefined if we have reached the end of the sequence
  * @param start starting value of the reduction past as first parameter to first call of func
  */
-function reduce<T, V>(
-    func: (_: V, x: T) => V,
-    seq: LazySequence<T> | undefined,
-    start: V
-): V {
+function reduce(func, seq, start) {
     return seq ? reduce(func, seq.next(), func(start, seq.value)) : start;
 }
-
-function reduceRight<T, V>(
-    f: (_: V, x: T) => V,
-    seq: LazySequence<T> | undefined,
-    start: V
-): V {
+function reduceRight(f, seq, start) {
     return seq ? f(reduceRight(f, seq.next(), start), seq.value) : start;
 }
-
 /**
  *  Exercise 3 - Reduce Practice
  */
-
-function maxNumber(lazyList: LazySequence<number>): number {
+function maxNumber(lazyList) {
     // ******** YOUR CODE HERE ********
     // Use __only__ reduce on the
     // lazyList passed in. The lazyList
     // will terminate so don't use `take`
     // inside this function body.
-    return reduce(
-        (currMax: number, val: number) => Math.max(currMax, val),
-        lazyList,
-        -Infinity
-    );
+    return reduce((currMax, val) => Math.max(currMax, val), lazyList, -Infinity);
 }
-
-function lengthOfSequence(lazyList: LazySequence<any>): number {
+function lengthOfSequence(lazyList) {
     // ******** YOUR CODE HERE ********
     // Again only use reduce and don't
     // use `take` inside this function.
-    return reduce((currLen: number, val: any) => currLen + 1, lazyList, 0);
+    return reduce((currLen, val) => currLen + 1, lazyList, 0);
 }
-
-function toArray<T>(seq: LazySequence<T>): T[] {
+function toArray(seq) {
     // ******** YOUR CODE HERE ********
     // Again only use reduce and don't
     // use `take` inside this function.
-    return reduce((currArr: T[], val: T) => currArr.concat(val), seq, []);
+    return reduce((currArr, val) => currArr.concat(val), seq, []);
 }
-
 /**
  *  Exercise 4 - Lazy Pi Approximations
  */
-
-function exercise4Solution(seriesLength: number): number {
+function exercise4Solution(seriesLength) {
     // Your solution using lazy lists.
     // Use `take` to only take the right amount of the infinite list.
-
     // generate sequence: 1, -3, 5, -7
     // map to 1/val
     // take seriesLength values
     // reduce with sum
-
-    return reduce(
-        (x: number, y: number) => x + y,
-        take(
-            seriesLength,
-            map(
-                (val: number) => 1 / val,
-                initSequence((val: number) =>
-                    val > 0 ? -(val + 2) : -(val - 2)
-                )(1)
-            )
-        ),
-        0
-    );
+    return reduce((x, y) => x + y, take(seriesLength, map((val) => 1 / val, initSequence((val) => val > 0 ? -(val + 2) : -(val - 2))(1))), 0);
 }
+//# sourceMappingURL=sequences.js.map
