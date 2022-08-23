@@ -17,8 +17,8 @@
  * browser window to run the test.
  */
 
-import { interval, fromEvent } from "rxjs";
-import { map, filter } from "rxjs/operators";
+import { interval, fromEvent, zip } from "rxjs";
+import { map, filter, scan } from "rxjs/operators";
 
 // Simple demonstration
 // ===========================================================================================
@@ -72,100 +72,103 @@ function mousePosObservable() {
 // Exercise 5
 // ===========================================================================================
 // ===========================================================================================
+class RNG {
+	readonly m = 0x80000000;
+	readonly a = 1103515245;
+	readonly c = 12345;
+	readonly value: number;
+
+	constructor(seed: number) {
+		this.value = seed ? seed : Math.floor(Math.random() * (this.m - 1));
+	}
+
+	int() {
+		return (this.a * this.value + this.c) % this.m;
+	}
+
+	float() {
+		return this.int() / (this.m - 1);
+	}
+
+	next() {
+		return new RNG(this.int());
+	}
+}
+
+class Dot {
+	readonly colour: "red" | "green";
+	readonly x: number;
+	readonly y: number;
+
+	constructor(x: number, y: number) {
+		this.x = x;
+		this.y = y;
+		this.colour = this.inCircle() ? "green" : "red";
+	}
+
+	inCircle(): boolean {
+		return this.x ** 2 + this.y ** 2 < 1;
+	}
+
+	translate(x: number, y: number): Dot {
+		return new Dot(this.x + x, this.y + y);
+	}
+}
+
+interface Data {
+	greens: number;
+	reds: number;
+}
+
 function piApproximation() {
-	// a simple, seedable, pseudo-random number generator
-	class RNG {
-		// LCG using GCC's constants
-		m = 0x80000000; // 2**31
-		a = 1103515245;
-		c = 12345;
-		state: number;
-		constructor(seed: number) {
-			this.state = seed ? seed : Math.floor(Math.random() * (this.m - 1));
-		}
-		nextInt() {
-			this.state = (this.a * this.state + this.c) % this.m;
-			return this.state;
-		}
-		nextFloat() {
-			// returns in range [0,1]
-			return this.nextInt() / (this.m - 1);
-		}
-	}
-
-	const resultInPage = document.getElementById("value_piApproximation"),
-		canvas = document.getElementById("piApproximationVis");
-
-	resultInPage.setAttribute("insideCount", String(0));
-
-	if (!resultInPage || !canvas) {
+	const resultInPage = document.getElementById("value_piApproximation");
+	const canvas = document.getElementById("piApproximationVis");
+	if (!resultInPage || !canvas)
 		console.log("Not on the observableexamples.html page");
-		return;
-	}
-
-	// Some handy types for passing data around
-	type Colour = "red" | "green";
-	type Dot = { x: number; y: number; colour?: Colour };
-	interface Data {
-		point?: Dot;
-		insideCount: number;
-		totalCount: number;
-	}
-
-	// an instance of the Random Number Generator with a specific seed
-	const rng = new RNG(20);
-	const nextRandom = () => rng.nextFloat() * 2 - 1;
 	const circleRadius = Number(canvas.getAttribute("width")) / 2;
-	const inCircle = ({ x, y }: Dot): boolean => x ** 2 + y ** 2 <= 1;
-	const translate = ({ x, y, colour }: Dot): Dot => ({
-		x: circleRadius * (x + 1),
-		y: circleRadius * (y + 1),
-		colour: colour,
-	});
-
-	const incrementInsideCount = () =>
-		resultInPage.setAttribute(
-			"insideCount",
-			String(parseInt(resultInPage.getAttribute("insideCount")) + 1)
-		);
 
 	resultInPage.innerText =
 		"...Update this text to show the Pi approximation...";
 
-	// Your code starts here!
-	// =========================================================================================
 	function createDot(point: Dot) {
 		if (!canvas) throw "Couldn't get canvas element!";
 
 		const dot = document.createElementNS(canvas.namespaceURI, "circle");
 
 		// Set circle properties
-		dot.setAttribute("cx", String(translate(point).x));
-		dot.setAttribute("cy", String(translate(point).y));
+		dot.setAttribute("cx", String(circleRadius * (point.x + 1)));
+		dot.setAttribute("cy", String(circleRadius * (point.y + 1)));
+		dot.setAttribute("fill", point.colour);
 		dot.setAttribute("r", "3");
-		dot.setAttribute("fill", inCircle(point) ? "green" : "red");
 
 		// Add the dot to the canvas
 		canvas.appendChild(dot);
-		if (inCircle(point)) incrementInsideCount();
-
-		resultInPage.innerText =
-			"pi is approximately " +
-			String(
-				Math.round(
-					(10000 *
-						4 *
-						parseInt(resultInPage.getAttribute("insideCount"))) /
-						canvas.childNodes.length
-				) / 10000
-			);
 	}
 
-	// A stream of random numbers
-	const randomNumberStream = interval(50).pipe(map(nextRandom));
-	randomNumberStream.subscribe((number) =>
-		createDot({ x: number, y: nextRandom() })
+	const randomFloatStream = (seed: number) =>
+		interval(50).pipe(
+			scan((r, _) => r.next(), new RNG(seed)),
+			map((r) => 1 - 2 * r.float())
+		);
+	const randomX$ = randomFloatStream(20);
+	const randomY$ = randomFloatStream(21);
+	const randomPoint$ = zip(randomX$, randomY$);
+	const randomDot$ = randomPoint$.pipe(map(([x, y]) => new Dot(x, y)));
+	const data$ = randomDot$.pipe(
+		scan<Dot, Data>(
+			({ greens, reds }, dot) =>
+				dot.inCircle()
+					? { greens: greens + 1, reds: reds }
+					: { greens: greens, reds: reds + 1 },
+			{ greens: 0, reds: 0 }
+		)
 	);
+	const pi$ = data$.pipe(
+		map(({ greens, reds }) => (4 * greens) / (greens + reds))
+	);
+
+	randomDot$.subscribe(createDot);
+	pi$.subscribe((pi) => (resultInPage.innerText = String(pi)));
 }
 
 // Exercise 6
