@@ -85,3 +85,40 @@ $$\vdots$$
 $$=g(g(Yg))$$
 $$\vdots$$
 $$\text{[Divergent]}$$
+
+## Exercise 8: Church Encoding
+
+Use the lambda calculus definitions below to evaluate the expressions, show your working:
+
+### 8.1
+
+$$\text{NOT FALSE} = (\lambda x. \text{ IF }x\text{ FALSE TRUE})\text{ FALSE}$$
+$$=\text{IF FALSE FALSE TRUE}$$
+$$=(\lambda btf.btf)(\lambda xy.y)(\lambda xy.y)(\lambda xy.x)$$
+$$=(\lambda xy.y)(\lambda xy.y)(\lambda xy.x)$$
+$$=\lambda xy.x$$
+$$=\text{TRUE}$$
+
+### 8.2
+
+$$\text{OR TRUE FALSE}=(\lambda xy.\text{IF }x\text{ TRUE }y)\text{ TRUE}\text{ FALSE}$$
+$$=\text{IF TRUE TRUE FALSE}$$
+$$=(\lambda btf.btf)(\lambda xy.x)(\lambda xy.x)(\lambda xy.y)$$
+$$=(\lambda xy.x)(\lambda xy.x)(\lambda xy.y)$$
+$$=\lambda xy.x$$
+$$=\text{TRUE}$$
+
+### 8.3
+
+$$\text{AND TRUE TRUE}=(\lambda xy.\text{IF }x\ y\text{ FALSE})\text{ TRUE TRUE}$$
+$$=\text{IF TRUE TRUE FALSE}$$
+$$=\text{TRUE}$$
+
+_Hint: What should the answers be for these expressions?_
+
+TRUE = $\lambda xy.x$\
+FALSE = $\lambda xy.y$\
+IF = $\lambda btf.btf$\
+AND = $\lambda xy.\text{IF }x\ y\text{ FALSE}$\
+OR = $\lambda xy.\text{IF }x\text{ TRUE }y$\
+NOT = $\lambda x.\text{IF }x\text{ FALSE TRUE}$
