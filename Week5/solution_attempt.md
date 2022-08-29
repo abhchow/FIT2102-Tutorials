@@ -45,7 +45,17 @@ Reminder: normal form is when an expression has been evaluated and is an answer.
 
 ## Exercise 4: Beta reduction
 
+Beta reduce the following expressions showing your working:
+
 1. $(\lambda y.zy)a=za$
 2. $(\lambda x.x)(\lambda x.x)=\lambda x.x$
 3. $(\lambda x.xy)(\lambda x.xx)=(\lambda x.xx)y=yy$
 4. $(\lambda z.z)(\lambda a.aa)(\lambda z.zb)=(\lambda a.aa)(\lambda z.zb)=(\lambda z.zb)(\lambda z.zb)=(\lambda z.zb)b=bb$
+
+## Exercise 5: Eta conversion
+
+Use Eta reduction/conversion to simplify the following expressions:
+
+1. $\lambda x.zx=z$
+2. $\lambda x.xz$
+3. $(\lambda x.bx)(\lambda y.ay)=(b)(a)=ba$
