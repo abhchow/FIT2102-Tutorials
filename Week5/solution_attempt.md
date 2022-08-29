@@ -59,3 +59,10 @@ Use Eta reduction/conversion to simplify the following expressions:
 1. $\lambda x.zx=z$
 2. $\lambda x.xz$
 3. $(\lambda x.bx)(\lambda y.ay)=(b)(a)=ba$
+
+## Exercise 6: Which of the following are combinators?
+
+1. $\lambda x.xxx$ [Yes]
+2. $\lambda xy.zx$ [No]
+3. $\lambda xyz.xy(zx)$ [Yes]
+4. $\lambda xyz.xy(zxy)$ [Yes]
