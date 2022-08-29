@@ -42,3 +42,10 @@ Reminder: normal form is when an expression has been evaluated and is an answer.
 2. $\lambda x.xx$ [Normal form]
 3. $(\lambda z.zz)(\lambda y.yy)=(\lambda y.yy)(\lambda y.yy)=\cdots$ [Divergent]
 4. $(\lambda x.xx)y=yy$ [Normal form]
+
+## Exercise 4: Beta reduction
+
+1. $(\lambda y.zy)a=za$
+2. $(\lambda x.x)(\lambda x.x)=\lambda x.x$
+3. $(\lambda x.xy)(\lambda x.xx)=(\lambda x.xx)y=yy$
+4. $(\lambda z.z)(\lambda a.aa)(\lambda z.zb)=(\lambda a.aa)(\lambda z.zb)=(\lambda z.zb)(\lambda z.zb)=(\lambda z.zb)b=bb$
