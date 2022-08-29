@@ -131,11 +131,11 @@ function piApproximation() {
             String((4 * pointData.insideCount) / pointData.totalCount);
     }
 
-    function pointsToDots(dot: Dot): Dot {
+    function pointsToDots(point: Dot): Dot {
         return ({
-            x: circleRadius * (dot.x + 1),
-            y: circleRadius * (dot.y + 1),
-            colour: inCircle(dot) ? "green" : "red",
+            x: circleRadius * (point.x + 1),
+            y: circleRadius * (point.y + 1),
+            colour: inCircle(point) ? "green" : "red",
         })
     }
     
@@ -169,7 +169,7 @@ function piApproximation() {
     const randStreamX = interval(time).pipe(map(nextRandom));
     const randStreamY = interval(time).pipe(map(nextRandom));
     const points = zip(randStreamX, randStreamY).pipe(
-        map(([xStream, yStream]) => ({ x: xStream, y: yStream }))
+        map(([xStream, yStream]) => (<Dot>{ x: xStream, y: yStream }))
     );
 
     const dataStream = points.pipe(
@@ -222,6 +222,10 @@ function animatedRectTimer() {
  * It terminates after 1 second (1000 milliseconds)
  */
 function animatedRect() {
+    const svg = document.getElementById("animatedRect")!;
+    // create the rect
+    const rect = document.createElementNS(svg.namespaceURI, "rect");
+    fromEvent<KeyboardEvent>(document, "keydown")
     // Your code starts here!
     // =========================================================================================
     // ...
