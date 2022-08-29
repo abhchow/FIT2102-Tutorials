@@ -1,0 +1,77 @@
+Exercise 1:
+    I combinator is x=>x
+    It is the identity function
+    You want to use it to preserve an input function, particularly when changing the order of curried inputs, such as in the K(I) combinator
+
+Exercise 2:
+    1. b
+    2. b
+        λxy.yx
+        = λx(λy.yx)
+        = λa(λb.ba)
+    3. b
+
+Exercise 3:
+    1.  (λx.x)y
+        λx [x:=y].x
+        y
+    2.  λx.xx
+        Cannot be further reduced, no more functions to apply
+    3.  (λx.xy)(λx.xx)
+        λx [x:=λx.xx].xy
+        (λx.xx)y        #calculator says this is wrong
+        λx [x:=y].xx
+        yy              #calculator tells me xy
+
+    4.  (λx.xx)y
+        λx [x:=y].xx
+        yy
+
+Exercise 4:
+    1.  (λy.zy)a
+        λy [y:=a].zy
+        za
+    2.  (λx.x)(λx.x)
+        λx [x:=λx.x].x
+        λx.x
+    3.  (λx.xy)(λx.xx)  #same sucker as 3.3 (please kill me)
+        λx [x:(λx.xx)].xy
+        (λx.xx)y
+        (λx [x:=y].xx)
+        yy              #calculator tells me xy
+    4.  (λz.z)(λa.aa)(λz.zb)
+        (λz [z:=λa.aa].z)(λz.zb)
+        (λa.aa)(λz.zb)
+        (λa [a:=λz.zb].aa)
+        (λz.zb)(λz.zb)
+        λz [z:= λz.zb].zb
+        (λz.zb)b
+        (λz [z:=b].zb)b
+        bb
+
+Exercise 5:
+    1.  λx.zx
+        z
+    2.  λx.xz
+        Trick question, can't eta reduce because x is not the last variable in the expression
+    3.  (λx.bx)(λy.ay)
+        ba
+
+Exercise 6:
+    1.  λx.xxx
+        Combinator
+    2.  λxy.zx
+        Not a combinator
+    3.  λxyz.xy(zx)
+        Combinator
+    4.  λxyz.xy(zxy)
+        Combinator
+
+Exercise 7:
+    Yg
+    =(λf.(λx.f(xx))(λx.f(xx))) g
+    =(λf [f:=g].(λx.f(xx))(λx.f(xx)))
+    =(λx.g(xx))(λx.g(xx))
+    =(λx [x=λx.g(xx)].g(xx))
+    =g((λx.g(xx))(λx.g(xx)))
+    =g(Yg)
