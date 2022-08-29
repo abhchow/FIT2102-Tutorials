@@ -66,3 +66,22 @@ Use Eta reduction/conversion to simplify the following expressions:
 2. $\lambda xy.zx$ [No]
 3. $\lambda xyz.xy(zx)$ [Yes]
 4. $\lambda xyz.xy(zxy)$ [Yes]
+
+_Hint: Remember that combinators are lambda expressions with no free variables_
+
+## Exercise 7: Y-Combinator application
+
+Apply the function \`g\` to the Y-combinator.
+
+The definition of the Y-Combinator is: $Y=\lambda f.(\lambda x.f(xx))(\lambda x.f(xx))$ where Y is the Y combinator.
+
+Use rules of reduction and equivalence to apply the function g to the Y combinator, and thus reduce the equation:
+
+$$Yg=(\lambda f.(\lambda x.f(xx))(\lambda x.f(xx)))g$$
+$$=(\lambda x.g(xx))(\lambda x.g(xx))$$
+$$=g((\lambda x.g(xx))(\lambda x.g(xx)))$$
+$$=g(Yg)$$
+$$\vdots$$
+$$=g(g(Yg))$$
+$$\vdots$$
+$$\text{[Divergent]}$$
