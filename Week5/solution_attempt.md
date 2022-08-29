@@ -28,6 +28,17 @@ The I-Combinator is known as the Identity combinator, it can be used to extract 
 
 Solutions
 
-1. $\lambda x.x=\lambda a.a$
-2. $\lambda xy.yx=\lambda ay.ya=\lambda ab.ba=\lambda a\lambda b.ba=\lambda a.(\lambda b.ba)$
-3. $\lambda xy.xz=\lambda my.mz=\lambda mn.mz$
+1. 2 or b $\left[\lambda x.x=\lambda a.a\right]$
+2. 2 or b $\left[\lambda xy.yx=\lambda ay.ya=\lambda ab.ba=\lambda a\lambda b.ba=\lambda a.(\lambda b.ba)\right]$
+3. 2 or b $\left[\lambda xy.xz=\lambda my.mz=\lambda mn.mz\right]$
+
+## Exercise 3: Beta normal form or divergence
+
+With the following lambda expressions, can you simplify them using beta reduction or do they diverge? Please show the normal form, or divergence by applying the lambda functions. Write out your steps.
+
+Reminder: normal form is when an expression has been evaluated and is an answer. (You cannot further reduce the expression)
+
+1. $(\lambda x.x)y=y$ [Normal form]
+2. $\lambda x.xx$ [Normal form]
+3. $(\lambda z.zz)(\lambda y.yy)=(\lambda y.yy)(\lambda y.yy)=\cdots$ [Divergent]
+4. $(\lambda x.xx)y=yy$ [Normal form]
