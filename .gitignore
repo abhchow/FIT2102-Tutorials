@@ -1,6 +1,6 @@
 node_modules/
 dist/
 
-.stack-work/
-stack.yaml.lock
+*.stack-work/
 *.cabal
+stack.yaml.lock
