@@ -84,10 +84,36 @@ Exercise 8:
     OR: (λxy. IF x TRUE y)
     NOT: (λx. IF x FALSE TRUE)
 
-    1. NOT FALSE
-    (\x. IF x FALSE TRUE)(λxy. y)
-    (λxy. x)
+    1.  NOT FALSE
+        (λx. IF x FALSE TRUE)FALSE
+        (λx [x:=FALSE]. IF x FALSE TRUE)
+        IF FALSE FALSE TRUE
+        (λbtf. b t f) FALSE FALSE TRUE
+        (λbtf [b:=FALSE, t:=FALSE, f:=TRUE]. b t f)
+        FALSE FALSE TRUE
+        (λxy. y) FALSE TRUE
+        (λxy [x:= FALSE, y: TRUE]. y)
+        TRUE
 
-    2. OR TRUE FALSE
+    2.  OR TRUE FALSE
+        (λxy. IF x TRUE y) TRUE FALSE
+        (λxy [x:=TRUE, y:=FALSE]. IF x TRUE y)
+        IF TRUE TRUE FALSE
+        (λbtf. b t f) TRUE TRUE FALSE
+        (λbtf [b:=TRUE, t:=TRUE, f:=false]. b t f)
+        TRUE TRUE FALSE
+        (λxy. x) TRUE FALSE
+        (λxy [x:= TRUE, y: FALSE]. y)
+        TRUE
 
-    3. AND TRUE TRUE
+    3.  AND TRUE TRUE
+        (λxy. IF x y FALSE) TRUE TRUE
+        (λxy [x:=TRUE y:=TRUE]. IF x y FALSE)
+        IF TRUE TRUE FALSE
+        (λbtf. b t f) TRUE TRUE FALSE
+        (λbtf [b:=TRUE, t:=TRUE, f:=false]. b t f)
+        TRUE TRUE FALSE
+        (λxy. x) TRUE FALSE
+        (λxy [x:= TRUE, y: FALSE]. y)
+        TRUE
+
