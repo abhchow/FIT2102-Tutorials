@@ -5,3 +5,4 @@ dist/
 # Stack files
 .stack-work/
 stack.yaml.lock
+*.cabal
