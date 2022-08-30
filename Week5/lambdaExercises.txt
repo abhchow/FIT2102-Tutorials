@@ -19,9 +19,9 @@ Exercise 3:
         Cannot be further reduced, no more functions to apply
     3.  (λx.xy)(λx.xx)
         λx [x:=λx.xx].xy
-        (λx.xx)y        #calculator says this is wrong
+        (λx.xx)Y
         λx [x:=y].xx
-        yy              #calculator tells me xy
+        yy
 
     4.  (λx.xx)y
         λx [x:=y].xx
@@ -34,11 +34,11 @@ Exercise 4:
     2.  (λx.x)(λx.x)
         λx [x:=λx.x].x
         λx.x
-    3.  (λx.xy)(λx.xx)  #same sucker as 3.3 (please kill me)
+    3.  (λx.xy)(λx.xx)
         λx [x:(λx.xx)].xy
         (λx.xx)y
         (λx [x:=y].xx)
-        yy              #calculator tells me xy
+        yy
     4.  (λz.z)(λa.aa)(λz.zb)
         (λz [z:=λa.aa].z)(λz.zb)
         (λa.aa)(λz.zb)
@@ -75,3 +75,19 @@ Exercise 7:
     =(λx [x=λx.g(xx)].g(xx))
     =g((λx.g(xx))(λx.g(xx)))
     =g(Yg)
+
+Exercise 8:
+    TRUE: (λxy. x)
+    FALSE: (λxy. y)
+    IF: (λbtf. b t f)       # condition true-action false-action
+    AND: (λxy. IF x y FALSE)
+    OR: (λxy. IF x TRUE y)
+    NOT: (λx. IF x FALSE TRUE)
+
+    1. NOT FALSE
+    (\x. IF x FALSE TRUE)(λxy. y)
+    (λxy. x)
+
+    2. OR TRUE FALSE
+
+    3. AND TRUE TRUE
