@@ -1,6 +1,7 @@
+# npm files
 node_modules/
 dist/
 
+# Stack files
 .stack-work/
 stack.yaml.lock
-*.cabal
