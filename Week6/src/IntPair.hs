@@ -25,9 +25,9 @@ data IntPair = IntPair Int Int
   deriving(Show)
 
 -- $setup
--- >>> p1 = (IntPair 5 6)
--- >>> p2 = (IntPair 7 1)
--- >>> p3 = (IntPair 9 9)
+p1 = (IntPair 5 6)
+p2 = (IntPair 7 1)
+p3 = (IntPair 9 9)
 
 -- | Sum the two element of a pair.
 --
@@ -37,7 +37,7 @@ data IntPair = IntPair Int Int
 -- >>> plusIntPair p2
 -- 8
 plusIntPair :: IntPair -> Int
-plusIntPair = undefined
+plusIntPair (IntPair x y) = x + y
 
 -- | Subtract the two elements of a pair.
 --
@@ -47,7 +47,7 @@ plusIntPair = undefined
 -- >>> minusIntPair p2
 -- 6
 minusIntPair :: IntPair -> Int
-minusIntPair = undefined
+minusIntPair (IntPair x y) = x - y
 
 -- | Return the maximum element in a pair.
 --
@@ -57,18 +57,18 @@ minusIntPair = undefined
 -- >>> maxIntPair p2
 -- 7
 maxIntPair :: IntPair -> Int
-maxIntPair = undefined
+maxIntPair (IntPair x y) = max x y
 
 -- | Add two pairs together.
 --
 -- >>> addIntPair p1 p2
 -- IntPair 12 7
 addIntPair :: IntPair -> IntPair -> IntPair
-addIntPair = undefined
+addIntPair (IntPair x1 y1) (IntPair x2 y2) = IntPair (x1+x2) (y1+y2)
 
 -- | Subtract two pairs together.
 --
 -- >>> subIntPair p1 p2
 -- IntPair (-2) 5
 subIntPair :: IntPair -> IntPair -> IntPair
-subIntPair = undefined
+subIntPair (IntPair x1 y1) (IntPair x2 y2) = IntPair (x1-x2) (y1-y2)

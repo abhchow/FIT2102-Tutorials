@@ -18,7 +18,7 @@ data List = List {size :: Int, elems :: [Int], low :: Int, high :: Int}
 -- >>> fromList [1, 7, 9, 2, 6, 11, 3]
 -- List {size = 7, elems = [1,7,9,2,6,11,3], low = 1, high = 11}
 fromList :: [Int] -> List
-fromList = undefined
+fromList list = List (length list) list (minimum list) (maximum list) 
 
 -- | Sort the list of elements in a list
 --
@@ -27,7 +27,7 @@ fromList = undefined
 --
 -- prop> elems (sortList (List a l b c)) == sort l
 sortList :: List -> List
-sortList = undefined
+sortList (List size elems low high) = List size (sort elems) low high
 
 -- | Add an element to a list.
 --
@@ -40,7 +40,7 @@ sortList = undefined
 -- >>> sortList $ addElem 0 list
 -- List {size = 8, elems = [0,1,2,3,6,7,9,11], low = 0, high = 11}
 addElem :: Int -> List -> List
-addElem = undefined
+addElem item (List size elems low high) = List (size+1) (item:elems) (min item low) (max item high)
 
 -- | Returns the longest of two lists.
 --
@@ -50,4 +50,7 @@ addElem = undefined
 -- >>> longest list (fromList [1..10])
 -- List {size = 10, elems = [1,2,3,4,5,6,7,8,9,10], low = 1, high = 10}
 longest :: List -> List -> List
-longest = undefined
+longest (List sizeA elemsA lowA highA) (List sizeB elemsB lowB highB) = 
+	if sizeA < sizeB
+		then (List sizeB elemsB lowB highB)
+		else (List sizeA elemsA lowA highA)
