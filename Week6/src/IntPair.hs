@@ -57,10 +57,7 @@ minusIntPair (IntPair x y) = x - y
 -- >>> maxIntPair p2
 -- 7
 maxIntPair :: IntPair -> Int
-maxIntPair (IntPair x y) = 
-	if x < y
-		then y
-		else x
+maxIntPair (IntPair x y) = max x y
 
 -- | Add two pairs together.
 --
