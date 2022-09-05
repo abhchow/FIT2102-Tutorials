@@ -1,9 +1,10 @@
--- Surname     | Firstname | Contribution % | Any issues?
--- =====================================================
--- Person 1... |           | 25%            |
--- Person 2... |           | 25%            |
--- Person 3... |           | 25%            |
--- Person 4... |           | 25%            |
+-- Surname     | First name | email                       | Contribution% | Any issues?
+-- ===================================================================================
+-- Chow        | Albert    | acho0023@student.monash.edu | 25%           |
+-- Putamorsi   | Max       | mput0002@student.monash.edu | 25%           |
+-- Ongko       | Timothy   | tong0006@student.monash.edu | 25%           |
+-- Ibrahim     | Hassan    | ihas0001@student.monash.edu | 25%           |
+--
 --
 -- Please do not hesitate to contact your tutors if there are
 -- issues that you cannot resolve within the group.
