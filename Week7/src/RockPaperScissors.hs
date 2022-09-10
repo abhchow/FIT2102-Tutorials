@@ -26,28 +26,48 @@ type Plays = [RockPaperScissors] -- This type alias is used to make our inputs m
 -- >>> map show rps
 -- ["R","P","S"]
 instance Show RockPaperScissors where
-  show = error "show not implemented"
+  show Rock = "R"
+  show Paper = "P"
+  show Scissors = "S"
 
 -- | Equality between members.
 --
 -- >>> insight (==) combinations
 -- [True,False,False,False,True,False,False,False,True]
 instance Eq RockPaperScissors where
-  _ == _ = error "eq not implemented"
+  a == b = show a == show b
 
 -- | Ordering to determine winning moves.
 --
 -- >>> insight compare combinations
 -- [EQ,LT,GT,GT,EQ,LT,LT,GT,EQ]
 instance Ord RockPaperScissors where
-  compare _ _ = error "ord not implemented"
+    compare Rock x = case x of
+        Rock -> EQ
+        Paper -> LT
+        Scissors -> GT
+    compare Paper x = case x of
+        Rock -> GT
+        Paper -> EQ
+        Scissors -> LT
+    compare Scissors x = case x of
+        Rock -> LT
+        Paper -> GT
+        Scissors -> EQ
+
+mapWin :: Ordering -> Result
+mapWin x =
+    case x of
+        LT -> Player2
+        EQ -> Draw
+        GT -> Player1
 
 -- | Tell which player won.
 --
 -- >>> insight whoWon combinations
 -- [Draw,Player2,Player1,Player1,Draw,Player2,Player2,Player1,Draw]
 whoWon :: RockPaperScissors -> RockPaperScissors -> Result
-whoWon = error "whoWon not implemented"
+whoWon a b = mapWin (compare a b)
 
 -- | Counts number of times a Result occurred in a series of Plays.
 --
@@ -60,7 +80,7 @@ whoWon = error "whoWon not implemented"
 -- >>> countResult [Rock, Paper, Paper, Scissors] [Rock, Scissors, Rock, Paper] Draw
 -- 1
 countResult :: Plays -> Plays -> Result -> Int
-countResult = error "countResult not implemented"
+countResult plays1 plays2 result = length (filter (== result) (zipWith whoWon plays1 plays2))
 
 -- | Calculates result of a series of Plays
 --
@@ -81,4 +101,5 @@ countResult = error "countResult not implemented"
 -- >>> competition [Scissors, Scissors, Scissors, Scissors, Scissors, Scissors] [Rock, Rock, Rock, Rock, Paper, Paper]
 -- Player2
 competition :: Plays -> Plays -> Result
-competition = error "competition not implemented"
+competition plays1 plays2 = mapWin (compare (x Player1) (x Player2))
+    where x=countResult plays1 plays2
