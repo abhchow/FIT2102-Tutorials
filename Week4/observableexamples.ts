@@ -191,29 +191,29 @@ function piApproximation() {
  * animates an SVG rectangle, passing a continuation to the built-in HTML5 setInterval function.
  * a rectangle smoothly moves to the right for 1 second.
  */
-function animatedRectTimer() {
-    // get the svg canvas element
-    const svg = document.getElementById("animatedRect")!;
-    // create the rect
-    const rect = document.createElementNS(svg.namespaceURI, "rect");
-    Object.entries({
-        x: 100,
-        y: 70,
-        width: 120,
-        height: 80,
-        fill: "#95B3D7",
-    }).forEach(([key, val]) => rect.setAttribute(key, String(val)));
-    svg.appendChild(rect);
+ function animatedRectTimer() {
+	// get the svg canvas element
+	const svg = document.getElementById("animatedRect")!;
+	// create the rect
+	const rect = document.createElementNS(svg.namespaceURI, "rect");
+	Object.entries({
+		x: 100,
+		y: 70,
+		width: 120,
+		height: 80,
+		fill: "#95B3D7",
+	}).forEach(([key, val]) => rect.setAttribute(key, String(val)));
+	svg.appendChild(rect);
 
-    const animate = setInterval(
-        () =>
-            rect.setAttribute("x", String(1 + Number(rect.getAttribute("x")))),
-        10
-    );
-    const timer = setInterval(() => {
-        clearInterval(animate);
-        clearInterval(timer);
-    }, 1000);
+	const animate = setInterval(
+		() =>
+			rect.setAttribute("x", String(1 + Number(rect.getAttribute("x")))),
+		10
+	);
+	const timer = setInterval(() => {
+		clearInterval(animate);
+		clearInterval(timer);
+	}, 1000);
 }
 
 /**
@@ -222,13 +222,28 @@ function animatedRectTimer() {
  * It terminates after 1 second (1000 milliseconds)
  */
 function animatedRect() {
-    const svg = document.getElementById("animatedRect")!;
-    // create the rect
-    const rect = document.createElementNS(svg.namespaceURI, "rect");
-    fromEvent<KeyboardEvent>(document, "keydown")
-    // Your code starts here!
-    // =========================================================================================
-    // ...
+	// Your code starts here!
+	// =========================================================================================
+	// ...
+	const intervalStream = interval(10).pipe((time) => time);
+	const svg = document.getElementById("animatedRect")!;
+	const rect = document.createElementNS(svg.namespaceURI, "rect");
+	Object.entries({
+		x: 100,
+		y: 70,
+		width: 120,
+		height: 80,
+		fill: "#95B3D7",
+	}).forEach(([key, val]) => rect.setAttribute(key, String(val)));
+	svg.appendChild(rect);
+
+	const subscription = intervalStream.subscribe((_) =>
+		rect.setAttribute("x", String(1 + Number(rect.getAttribute("x"))))
+	);
+
+	intervalStream.subscribe((time) =>
+		time > 100 ? subscription.unsubscribe() : null
+	);
 }
 
 // Exercise 7
@@ -239,27 +254,70 @@ function animatedRect() {
  * If statements
  */
 function keyboardControl() {
-    // get the svg canvas element
-    const svg = document.getElementById("moveableRect")!;
+	// get the svg canvas element
+	const svg = document.getElementById("moveableRect")!;
 
-    // Your code starts here!
-    // =========================================================================================
-    // ...
+	// Your code starts here!
+	// =========================================================================================
+	// ...
+	const key$ = fromEvent<KeyboardEvent>(document, "keydown");
+
+	key$.pipe(map((e) => e.key)).subscribe((key) =>
+		key === "a" ? moveLeft(rect) : null
+	);
+
+	key$.pipe(map((e) => e.key)).subscribe((key) =>
+		key === "d" ? moveRight(rect) : null
+	);
+
+	key$.pipe(map((e) => e.key)).subscribe((key) =>
+		key === "w" ? moveUp(rect) : null
+	);
+
+	key$.pipe(map((e) => e.key)).subscribe((key) =>
+		key === "s" ? moveDown(rect) : null
+	);
+
+	const rect = document.createElementNS(svg.namespaceURI, "rect");
+	Object.entries({
+		x: 100,
+		y: 70,
+		width: 120,
+		height: 80,
+		fill: "#95B3D7",
+	}).forEach(([key, val]) => rect.setAttribute(key, String(val)));
+	svg.appendChild(rect);
+}
+
+function moveRight(rect: Element) {
+	rect.setAttribute("x", String(1 + Number(rect.getAttribute("x"))));
+}
+
+function moveLeft(rect: Element) {
+	rect.setAttribute("x", String(-1 + Number(rect.getAttribute("x"))));
+}
+
+function moveDown(rect: Element) {
+	rect.setAttribute("y", String(1 + Number(rect.getAttribute("y"))));
+}
+
+function moveUp(rect: Element) {
+	rect.setAttribute("y", String(-1 + Number(rect.getAttribute("y"))));
 }
 
 // Running the code
 // ===========================================================================================
 // ===========================================================================================
 document.addEventListener("DOMContentLoaded", function (event) {
-    piApproximation();
+	piApproximation();
 
-    // compare mousePosEvents and mousePosObservable for equivalent implementations
-    // of mouse handling with events and then with Observable, respectively.
-    //mousePosEvents();
-    mousePosObservable();
+	// compare mousePosEvents and mousePosObservable for equivalent implementations
+	// of mouse handling with events and then with Observable, respectively.
+	//mousePosEvents();
+	mousePosObservable();
 
-    animatedRectTimer();
-    // replace the above call with the following once you have implemented it:
-    //animatedRect()
-    keyboardControl();
+	//animatedRectTimer();
+	// replace the above call with the following once you have implemented it:
+	animatedRect();
+	keyboardControl();
 });
