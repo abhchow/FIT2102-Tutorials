@@ -15,7 +15,8 @@ import Data.Maybe()
 -- >>> isJust Nothing
 -- False
 isJust :: Maybe a -> Bool
-isJust = undefined
+isJust (Just _ ) = True
+isJust Nothing = False
 
 -- | Inverse of 'isJust'.
 --
@@ -25,7 +26,7 @@ isJust = undefined
 -- >>> isNothing Nothing
 -- True
 isNothing :: Maybe a -> Bool
-isNothing = undefined
+isNothing input = not $ isJust input
 
 -- | Extract the value of a 'Just' but return a fallback in case of 'Nothing'.
 --
@@ -35,7 +36,8 @@ isNothing = undefined
 -- >>> fromMaybe Nothing 7
 -- 7
 fromMaybe :: Maybe a -> a -> a
-fromMaybe = undefined
+fromMaybe (Just a) _ = a
+fromMaybe Nothing b = b
 
 -- | Gather 'Just' values in a list, filter the 'Nothing'.
 --
@@ -45,4 +47,9 @@ fromMaybe = undefined
 -- >>> catMaybe lnaught
 -- [3,8]
 catMaybe :: [Maybe a] -> [a]
-catMaybe = undefined
+catMaybe [] = []
+catMaybe (x:xs) =
+    let rs = catMaybe xs in
+        case x of
+            Nothing -> rs
+            Just r -> r:rs
