@@ -17,7 +17,7 @@ newtype Parser a = Parser (String -> Maybe (String, a))
 
 -- | Wrapper function for parsing
 parse :: Parser a -> String -> Maybe (String, a)
-parse (Parser p) inp = p inp
+parse (Parser p) = p
 
 -- |
 --
