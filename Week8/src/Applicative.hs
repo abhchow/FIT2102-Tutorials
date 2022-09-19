@@ -126,7 +126,7 @@ instance Applicative ((->) r) where
 -- >>> nestedApply [Id (++" hello"),Id (++" world!")] (Id "hello")
 -- [Id "hello hello",Id "hello world!"]
 nestedApply :: (Applicative f, Applicative g) => g (f (a -> b)) -> f a -> g (f b)
-nestedApply gfab fa = fmap (<*> fa) gfab 
+nestedApply gfab fa = (<$>) (<*> fa) gfab 
 
 -- | Apply to a RoseTree, i.e. return a tree composed of trees created by the
 -- successive application of functions to initial nodes.
