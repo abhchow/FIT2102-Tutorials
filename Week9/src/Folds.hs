@@ -1,4 +1,9 @@
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+
+{-# HLINT ignore "Use or" #-}
+{-# HLINT ignore "Use and" #-}
+{-# HLINT ignore "Use concat" #-}
 
 -- Complete the following table when you submit this file:
 
@@ -13,7 +18,7 @@
 -- only /folds/.
 module Folds where
 
-import           Base hiding ((++))
+import Base hiding ((++))
 
 -- | Rewrite 'all' using 'foldr'.
 -- | Must write point-free and without lambda functions.
@@ -67,7 +72,7 @@ product = foldr (*) 1
 --
 -- prop> sum (map (const 1) x) == length x
 length :: [a] -> Int
-length = foldr (\_ y -> y+1) 0
+length = foldr (\_ y -> y + 1) 0
 
 -- | Rewrite /append/ '(++)' using 'foldr'.
 -- | Must write this in point-free notation and without lambda functions

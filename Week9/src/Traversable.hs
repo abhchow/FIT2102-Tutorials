@@ -1,4 +1,7 @@
-{-# LANGUAGE NoImplicitPrelude, InstanceSigs #-}
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# OPTIONS_GHC -Wno-typed-holes #-}
+
 -- | This module implements the 'Foldable' and 'Traversable' instances for some
 -- recursive types.
 --
@@ -9,11 +12,11 @@
 --    which produces an effect.
 module Traversable where
 
-import           Base
-import           Functor
-import           Applicative
-import           Folds
-import           ExercisesW8
+import Applicative
+import Base
+import ExercisesW8
+import Folds
+import Functor
 
 -- $setup
 -- >>> import Data.Semigroup
@@ -50,8 +53,8 @@ class (Functor t, Foldable t) => Traversable t where
 -- >>> getProduct $ foldMap Product [1..10]
 -- 3628800
 instance Foldable [] where
-    foldMap :: (Monoid m) => (a -> m) -> [a] -> m
-    foldMap = error "Foldable list not implemented"
+  foldMap :: (Monoid m) => (a -> m) -> [a] -> m
+  foldMap f = foldr (mappend . f) mempty
 
 -- | Traverse a list while producing an effect.
 --
@@ -66,8 +69,8 @@ instance Foldable [] where
 -- >>> traverse justEven [2, 4, 7]
 -- Nothing
 instance Traversable [] where
-    traverse :: Applicative f => (a -> f b) -> [a] -> f [b]
-    traverse = error "traversable list not implemented"
+  traverse :: Applicative f => (a -> f b) -> [a] -> f [b]
+  traverse f a = sequence $ f <$> a
 
 -- | Write instance for Maybe as a foldable.
 --
@@ -79,8 +82,8 @@ instance Traversable [] where
 -- >>> getProduct $ foldMap Product (Just 5)
 -- 5
 instance Foldable Maybe where
-    foldMap :: (Monoid m) => (a -> m) -> Maybe a -> m
-    foldMap = error "foldable maybe not implemented"
+  foldMap :: (Monoid m) => (a -> m) -> Maybe a -> m
+  foldMap f = foldr ((<>) . f) mempty
 
 -- | Traverse a Maybe
 --
@@ -89,10 +92,9 @@ instance Foldable Maybe where
 --
 -- >>> traverse (\x -> [x, x+1]) Nothing
 -- [Nothing]
---
-instance Traversable Maybe where
-    traverse :: Applicative f => (a -> f b) -> Maybe a -> f (Maybe b)
-    traverse = error "traversable maybe not implemented"
+-- instance Traversable Maybe where
+--   traverse :: Applicative f => (a -> f b) -> Maybe a -> f (Maybe b)
+--   traverse f a = sequence $ f a
 
 {-
     ******************** Supplementary **************************
@@ -109,9 +111,8 @@ instance Traversable Maybe where
 --
 -- /Hint/: use the Monoid's 'mempty', 'mappend' and 'mconcat'.
 instance Foldable RoseTree where
-    foldMap :: (Monoid m) => (a -> m) -> RoseTree a -> m
-    foldMap = error "foldable rosetree not implemented"
-
+  foldMap :: (Monoid m) => (a -> m) -> RoseTree a -> m
+  foldMap = error "foldable rosetree not implemented"
 
 -- | Traverse a 'RoseTree' while producing an effect.
 --
@@ -135,5 +136,5 @@ instance Foldable RoseTree where
 -- completely mystified then write down questions for your tutor and your best
 -- approximation in English of what you think needs to happen in English.
 instance Traversable RoseTree where
-    traverse :: Applicative f => (a -> f b) -> RoseTree a -> f (RoseTree b)
-    traverse = error "traversable rosetree not implemented"
+  traverse :: Applicative f => (a -> f b) -> RoseTree a -> f (RoseTree b)
+  traverse = error "traversable rosetree not implemented"

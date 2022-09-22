@@ -1,9 +1,10 @@
 {-# LANGUAGE NoImplicitPrelude #-}
+
 module Exercises where
 
-import           Base hiding (maybe)
-import           Functor
-import           ExercisesW8
+import Base hiding (maybe)
+import ExercisesW8
+import Functor
 
 -- | Ignores the first value, and puts the second value in a context
 --
@@ -12,6 +13,6 @@ import           ExercisesW8
 -- >>> [1,2,3,4] $> 3
 -- [3,3,3,3]
 ($>) :: Functor f => f b -> a -> f a
-($>) = error "$> not implemented"
+($>) a b = (<$>) (const b) a
 
 infix 4 $>
