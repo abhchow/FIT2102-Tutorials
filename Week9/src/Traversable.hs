@@ -88,7 +88,7 @@ instance Foldable Maybe where
 -- | Traverse a Maybe
 --
 -- >>> traverse (\x -> [x, x+1]) (Just 5)
--- [Just 5,Just 6]
+-- [Just 5,Just 6]a
 --
 -- >>> traverse (\x -> [x, x+1]) Nothing
 -- [Nothing]
@@ -103,10 +103,10 @@ instance Foldable Maybe where
 
 -- | Fold a RoseTree into a value.
 --
--- >>> getSum $ foldMap Sum (Node 7 [Node 1 [], Node 2 [], Node 3 [Node 4 []]])
+-- > getSum $ foldMap Sum (Node 7 [Node 1 [], Node 2 [], Node 3 [Node 4 []]])
 -- 17
 --
--- >>> getProduct $ foldMap Product (Node 7 [Node 1 [], Node 2 [], Node 3 [Node 4 []]])
+-- > getProduct $ foldMap Product (Node 7 [Node 1 [], Node 2 [], Node 3 [Node 4 []]])
 -- 168
 --
 -- /Hint/: use the Monoid's 'mempty', 'mappend' and 'mconcat'.
@@ -116,10 +116,10 @@ instance Foldable RoseTree where
 
 -- | Traverse a 'RoseTree' while producing an effect.
 --
--- >>> traverse justEven (Node 4 [Node 6 []])
+-- > traverse justEven (Node 4 [Node 6 []])
 -- Just (Node 4 [Node 6 []])
 --
--- >>> traverse justEven (Node 4 [Node 6 [], Node 7 []])
+-- > traverse justEven (Node 4 [Node 6 [], Node 7 []])
 -- Nothing
 --
 -- /Hint/: follow the types, use type holes to try to figure out what goes where.
