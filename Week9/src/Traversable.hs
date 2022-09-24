@@ -88,13 +88,14 @@ instance Foldable Maybe where
 -- | Traverse a Maybe
 --
 -- >>> traverse (\x -> [x, x+1]) (Just 5)
--- [Just 5,Just 6]a
+-- [Just 5,Just 6]
 --
 -- >>> traverse (\x -> [x, x+1]) Nothing
 -- [Nothing]
--- instance Traversable Maybe where
---   traverse :: Applicative f => (a -> f b) -> Maybe a -> f (Maybe b)
---   traverse f a = sequence $ f a
+instance Traversable Maybe where
+  traverse :: Applicative f => (a -> f b) -> Maybe a -> f (Maybe b)
+  traverse _ Nothing = pure Nothing
+  traverse f (Just x) = Just <$> f x
 
 {-
     ******************** Supplementary **************************
