@@ -1,19 +1,22 @@
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
-{-# LANGUAGE NoImplicitPrelude, InstanceSigs #-}
 -- | Implement instances and convenience functions for the 'Monad' typeclass.
 module Exercises where
 
-import           Applicative             hiding ( (<*>) )
-import           Base                    hiding ( (>>) )
-import           Data.Foldable                  ( Foldable
-                                                , foldl
-                                                , foldr
-                                                )
-import           Functor
-import           Monad
-import           Traversable                    ( Traversable
-                                                , traverse
-                                                )
+import Applicative hiding ((<*>))
+import Base hiding ((>>))
+import Data.Foldable
+  ( Foldable,
+    foldl,
+    foldr,
+  )
+import Functor
+import Monad
+import Traversable
+  ( Traversable,
+    traverse,
+  )
 
 -- | Flatten a combined structure to a single structure.
 --
@@ -35,7 +38,7 @@ import           Traversable                    ( Traversable
 -- >>> (join (+)) 3
 -- 6
 join :: Monad f => f (f a) -> f a
-join = error "join not implemented"
+join = (=<<) id
 
 -- | Implement a flipped version of '=<<'.
 --
@@ -54,18 +57,19 @@ join = error "join not implemented"
 -- >>> Just 20 >>= half >>= half >>= half
 -- Nothing
 (>>=) :: Monad f => f a -> (a -> f b) -> f b
-(>>=) = error "right bind not implemented"
+-- (>>=) = flip (=<<)
+(>>=) m l = join $ l <$> m
 
 -- | Sequentially call two monadic actions
 --
 -- >>> [1,2,3] >> [2,3,4]
 -- [2,3,4,2,3,4,2,3,4]
 (>>) :: Monad m => m a -> m b -> m b
-(>>) = error "empty bind not implemented"
+(>>) m k = m >>= const k
 
 -- | 'return' is just 'pure', which is available because a Monad is also an Applicative
 return :: (Monad m) => a -> m a
-return = error "return not implemented"
+return = pure
 
 -- | map a function with a monadic effect across a Traversable.
 --
@@ -83,7 +87,7 @@ return = error "return not implemented"
 -- >>> mapM doubleSmallNumbers [1,2,1,2]
 -- Just [2,4,2,4]
 mapM :: (Monad m, Traversable t) => (a -> m b) -> t a -> m (t b)
-mapM = error "mapm not implemented"
+mapM = traverse
 
 -- | ------------------------------------------------------
 -- | -------------------- Supplementary -------------------
@@ -143,6 +147,7 @@ foldM = error "foldM not implemented"
 -- -- [2,2,3,3]
 (<=<) :: Monad f => (b -> f c) -> (a -> f b) -> a -> f c
 (<=<) = error "monad compose not implemented"
+
 infixr 1 <=<
 
 -- | The following highlight the relationship between Functor, Applicative, and Monad.
