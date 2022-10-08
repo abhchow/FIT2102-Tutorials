@@ -1,14 +1,17 @@
-{-# LANGUAGE NoImplicitPrelude, InstanceSigs #-}
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+
 -- | Implement instances and convenience functions for the 'Monad' typeclass.
 module Monad
-  ( Monad
-  , (=<<)
-  ) where
+  ( Monad,
+    (=<<),
+  )
+where
 
-import           Applicative
-import           Base
-import           Functor
-import           Prelude                        ( (++) )
+import Applicative
+import Base
+import Functor
+import Prelude ((++))
 
 -- | All instances of the 'Monad' typeclass must satisfy one law. This law
 -- is not checked by the compiler. This law is given as:
@@ -19,6 +22,7 @@ import           Prelude                        ( (++) )
 class Applicative f => Monad f where
   -- Pronounced: "bind."
   (=<<) :: (a -> f b) -> f a -> f b
+
 infixr 1 =<<
 
 -- | Bind a function on a list.
@@ -30,7 +34,7 @@ infixr 1 =<<
 -- [1,1,2,2,3,3]
 instance Monad [] where
   (=<<) :: (a -> [b]) -> [a] -> [b]
-  (=<<) = error "monad list not implemented"
+  (=<<) m l = mconcat $ m <$> l
 
 -- | Bind a function on a 'Maybe'.
 -- /Hint/: Use pattern matching to handle the Nothing and the Just cases.
@@ -43,7 +47,8 @@ instance Monad [] where
 -- Nothing
 instance Monad Maybe where
   (=<<) :: (a -> Maybe b) -> Maybe a -> Maybe b
-  (=<<) = error "monad maybe not implemented"
+  (=<<) m (Just a) = m a
+  (=<<) m Nothing = Nothing
 
 -- | ------------------------------------------------------
 -- | -------------------- Supplementary -------------------
@@ -80,4 +85,4 @@ instance Monad Maybe where
 -- [2,3,4,1,2,3]
 instance Monad ((->) r) where
   (=<<) :: (a -> (r -> b)) -> (r -> a) -> (r -> b)
-  (=<<) = error "monad function not implemented"
+  (=<<) m f = \r -> m (f r) r
