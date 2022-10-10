@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-typed-holes #-}
 -- | Implementation of a parser-combinator.
 module Parser where
 
@@ -254,7 +255,7 @@ alpha = satisfy isAlpha
 -- >>> parse (tok (is 'a')) "abc"
 -- Result >bc< 'a'
 tok :: Parser a -> Parser a
-tok = error "tok not implemented"
+tok p = p <* spaces
 
 -- | Write a function that parses the given char followed by 0 or more spaces.
 --
@@ -266,7 +267,7 @@ tok = error "tok not implemented"
 -- >>> isErrorResult (parse (charTok 'a') "dabc")
 -- True
 charTok :: Char -> Parser Char
-charTok = error "charTok not implemented"
+charTok c = is c <* spaces
 
 -- | Write a parser that parses a comma ',' followed by 0 or more spaces.
 --
@@ -278,7 +279,7 @@ charTok = error "charTok not implemented"
 -- >>> isErrorResult( parse commaTok "1,23")
 -- True
 commaTok :: Parser Char
-commaTok = error "commaTok not implemented"
+commaTok = is ',' <* spaces
 
 -- | Write a function that parses the given string, followed by 0 or more
 -- spaces.
@@ -291,7 +292,7 @@ commaTok = error "commaTok not implemented"
 -- >>> isErrorResult (parse (stringTok "abc") "bc  ")
 -- True
 stringTok :: String -> Parser String
-stringTok = error "stringTok not implemented"
+stringTok s = string s <* spaces
 
 -- | -------------------------------------------------
 -- | ------------- Sequential parsers ----------------
@@ -322,7 +323,7 @@ stringTok = error "stringTok not implemented"
 -- >>> parse (list (char *> pure 'v')) ""
 -- Result >< ""
 list :: Parser a -> Parser [a]
-list = error "list not implemented"
+list fa = list1 fa ||| pure []
 
 -- | Return a parser that produces at least one value from the given parser
 -- then continues producing a list of values from the given parser (to
@@ -339,7 +340,7 @@ list = error "list not implemented"
 -- >>> isErrorResult (parse (list1 (char *> pure 'v')) "")
 -- True
 list1 :: Parser a -> Parser [a]
-list1 = error "list1 not implemented"
+list1 fa = liftA2 (:) fa (list fa)
 
 -- | Write a parser that will parse zero or more spaces.
 --
@@ -351,7 +352,7 @@ list1 = error "list1 not implemented"
 -- >>> parse spaces "abc"
 -- Result >abc< ""
 spaces :: Parser String
-spaces = error "spaces not implemented"
+spaces = list space
 
 -- | Return a parser that produces one or more space characters (consuming
 -- until the first non-space) but fails if:
