@@ -3,12 +3,8 @@ module Parser where
 
 import           Control.Applicative
 import           Control.Monad
-import           Data.Char                      ( isAlpha
-                                                , isDigit
-                                                , isLower
-                                                , isSpace
-                                                , isUpper
-                                                )
+import           Data.Char           (isAlpha, isDigit, isLower, isSpace,
+                                      isUpper)
 import           Instances
 
 -- | -------------------------------------------------
@@ -149,7 +145,7 @@ satisfy f = char >>= f'
 -- >>> isErrorResult (parse (is 'c') "b")
 -- True
 is :: Char -> Parser Char
-is = error "is not implemented"
+is = satisfy . (==)
 
 -- | Return a parser that produces any character but fails if:
 --
@@ -166,7 +162,7 @@ is = error "is not implemented"
 -- >>> isErrorResult (parse (isNot 'c') "c")
 -- True
 isNot :: Char -> Parser Char
-isNot = error "isnot not implemented"
+isNot = satisfy . (/=)
 
 -- | Write a function that parses one of the characters in the given string.
 --
@@ -178,7 +174,7 @@ isNot = error "isnot not implemented"
 -- >>> isErrorResult (parse (oneof "abc") "def")
 -- True
 oneof :: String -> Parser Char
-oneof = error "oneof not implemented"
+oneof = satisfy . flip elem
 
 -- | Write a function that parses any character, but fails if it is in the
 -- given string.
@@ -191,7 +187,7 @@ oneof = error "oneof not implemented"
 -- >>> isErrorResult (parse (noneof "abcd") "abc")
 -- True
 noneof :: String -> Parser Char
-noneof = error "noneof not implemented"
+noneof = satisfy . flip notElem
 
 -- | Return a parser that produces a character between '0' and '9' but fails if
 --
@@ -201,7 +197,7 @@ noneof = error "noneof not implemented"
 --
 -- /Hint/: Use the 'isDigit' function
 digit :: Parser Char
-digit = error "digit not implemented"
+digit = satisfy isDigit
 
 -- | Return a parser that produces a space character but fails if
 --
@@ -211,7 +207,7 @@ digit = error "digit not implemented"
 --
 -- /Hint/: Use the 'isSpace' function
 space :: Parser Char
-space = error "space not implemented"
+space = satisfy isSpace
 
 -- | Return a parser that produces a lower-case character but fails if:
 --
@@ -221,7 +217,7 @@ space = error "space not implemented"
 --
 -- /Hint/: Use the 'isLower' function
 lower :: Parser Char
-lower = error "lower not implemented"
+lower = satisfy isLower
 
 -- | Return a parser that produces an upper-case character but fails if:
 --
@@ -231,7 +227,7 @@ lower = error "lower not implemented"
 --
 -- /Hint/: Use the 'isUpper' function
 upper :: Parser Char
-upper = error "upper not implemented"
+upper = satisfy isUpper
 
 -- | Return a parser that produces an alpha character but fails if:
 --
@@ -241,7 +237,7 @@ upper = error "upper not implemented"
 --
 -- /Hint/: Use the 'isAlpha' function
 alpha :: Parser Char
-alpha = error "alpha not implemented"
+alpha = satisfy isAlpha
 
 -- | -------------------------------------------------
 -- | --------------- Token parsers -------------------

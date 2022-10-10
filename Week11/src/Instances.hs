@@ -1,6 +1,6 @@
 module Instances where
 
-import qualified Numeric                       as N
+import qualified Numeric as N
 
 -- $setup
 -- >>> let p = \n -> P (\x -> Result x n)
@@ -37,7 +37,7 @@ instance Functor ParseResult where
 
 -- Parser Instances
 
--- | Functor instance for a paser
+-- | Functor instance for a parser
 --
 -- >>> parse ((+1) <$> P (`Result` 1)) "hello"
 -- Result >hello< 2
