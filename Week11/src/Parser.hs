@@ -369,7 +369,7 @@ spaces = list space
 -- >>> isErrorResult $ parse spaces1 "abc"
 -- True
 spaces1 :: Parser String
-spaces1 = error "spaces1 not implemented"
+spaces1 = liftA2 (:) space spaces
 
 -- | Return a parser that produces the given number of values off the given
 -- parser.  This parser fails if the given parser fails in the attempt to
@@ -427,7 +427,7 @@ string = traverse is
 -- >>> isErrorResult (parse (sepby1 char (is ',')) "")
 -- True
 sepby1 :: Parser a -> Parser s -> Parser [a]
-sepby1 = error "sepby1 not implemented"
+sepby1 p s =  liftA2 (:) p (list $ s *> p)
 
 -- | Write a function that produces a list of values from repeating the given
 -- parser, separated by the second given parser.
@@ -446,7 +446,7 @@ sepby1 = error "sepby1 not implemented"
 -- >>> parse (sepby char (is ',')) "a,b,c,,def"
 -- Result >def< "abc,"
 sepby :: Parser a -> Parser s -> Parser [a]
-sepby = error "sepby not implemented"
+sepby p s = sepby1 p s ||| pure []
 
 -- | Write a function that produces a parser for an array (list)
 --
@@ -476,4 +476,4 @@ sepby = error "sepby not implemented"
 -- >>> isErrorResult (parse (array $ tok int) "1")
 -- True
 array :: Parser a -> Parser [a]
-array = error "array not implemented"
+array p = charTok '[' *> sepby p commaTok <* charTok ']'
